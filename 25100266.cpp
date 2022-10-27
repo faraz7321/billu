@@ -3,6 +3,11 @@
 
 using namespace std;
 
+void fraz_nub()
+{
+    cout << " hehe";
+}
+
 struct Card
 {
     char color; // color should either be set to R(red) or B(black)
