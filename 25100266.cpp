@@ -6,9 +6,9 @@ using namespace std;
 
 struct Card
 {
-    char color;       // color should either be set to R(red) or B(black)
-    char suit;        // suit should be S(spades), D(diamonds), C(clubs), H(Hearts)
-    std::string rank; // rank signifies numbers 2-10 and (A)Ace, (K)King, (Q)Queen and (J)Jack.
+    char color; // color should either be set to R(red) or B(black)
+    char suit;  // suit should be S(spades), D(diamonds), C(clubs), H(Hearts)
+    char rank;  // rank signifies numbers 2-10 and (A)Ace, (K)King, (Q)Queen and (J)Jack.
 
     /*Feel free to add any member function IF you want to*/
 };
@@ -46,12 +46,7 @@ int main()
         gameState[i] = new Card[7];
     }
     int newGameOrLoadedGame = GameOptions();
-    /*
-         TO DO:----
 
-         1. If the user wishes to play a new game, intialise the deck using the function given to you and display the a new game to the user.
-         2. Else If the user wishes to resume a previously saved game, load it from a file and display it to the user.
-    */
     if (newGameOrLoadedGame == 1)
     {
         initialiseDeck(deck, numberOfCards);
@@ -61,6 +56,7 @@ int main()
     }
     else if (newGameOrLoadedGame == 2)
     {
+        //TODO
         LoadGame(deck, numberOfCards, gameState, freeCells, HomeSlots);
     }
 
@@ -75,13 +71,12 @@ int main()
             columnToColumn(gameState);
             displayBoard(gameState, freeCells, HomeSlots);
             break;
-        case 2:
-            // TO DO:---- Implement functionality to doing a column to free cell move
+        case 2: //dynamic
             columnToFreeCell(gameState, freeCells);
             displayBoard(gameState, freeCells, HomeSlots);
             break;
         case 3:
-            // TO DO:---- Implement functionality to doing a free cell to column move
+            //a free cell to column move
             freeCellToColumn(gameState, freeCells);
             displayBoard(gameState, freeCells, HomeSlots);
             break;
@@ -121,7 +116,7 @@ void shuffle(Card *deck, int numberOfCards)
 }
 void initialiseDeck(Card *deck, int numberOfCards)
 {
-    string rankArray[13] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+    char rankArray[13] = {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'};
     char suitArr[4] = {'S', 'C', 'D', 'H'};
     char colorArr[2] = {'B', 'R'};
 
@@ -149,7 +144,7 @@ void PrintDeck(Card *deck, int numberOfCards)
 {
     for (int i = 0; i < numberOfCards; i++)
     {
-        cout << deck[i].rank << deck[i].suit << deck[i].color << " ";
+        cout << deck[i].rank << deck[i].suit << deck[i].color << ' ';
         if (i == 12 || i == 25 || i == 38 || i == 51)
         {
             cout << endl;
@@ -207,29 +202,29 @@ void SaveGame(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, 
     }
     for (int i = 0; i < 52; i++)
     {
-        fout << deck[i].color << " ";
-        fout << deck[i].suit << " ";
-        fout << deck[i].rank << " ";
+        fout << deck[i].color << ' ';
+        fout << deck[i].suit << ' ';
+        fout << deck[i].rank << ' ';
     }
     for (int i = 0; i < 4; i++)
     {
-        fout << freeCells[i].color << " ";
-        fout << freeCells[i].suit << " ";
-        fout << freeCells[i].rank << " ";
+        fout << freeCells[i].color << ' ';
+        fout << freeCells[i].suit << ' ';
+        fout << freeCells[i].rank << ' ';
     }
     for (int i = 0; i < 4; i++)
     {
-        fout << HomeSlots[i].color << " ";
-        fout << HomeSlots[i].suit << " ";
-        fout << HomeSlots[i].rank << " ";
+        fout << HomeSlots[i].color << ' ';
+        fout << HomeSlots[i].suit << ' ';
+        fout << HomeSlots[i].rank << ' ';
     }
     for (int i = 0; i < 8; i++)
     {
         for (int j = 0; j < 13; j++)
         {
-            fout << gameState[i][j].color << " ";
-            fout << gameState[i][j].suit << " ";
-            fout << gameState[i][j].rank << " ";
+            fout << gameState[i][j].color << ' ';
+            fout << gameState[i][j].suit << ' ';
+            fout << gameState[i][j].rank << ' ';
         }
     }
     fout.close();
@@ -237,11 +232,6 @@ void SaveGame(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, 
 
 int MovesByUser()
 {
-    /*This function takes in the user's move
-
-        TO DO:---- Implement error handling so user gives chooses a move only from the given options
-
-    */
     bool valid = true;
     while (valid)
     {
@@ -362,9 +352,9 @@ void displayBoard(Card **gameState, Card *freeCells, Card *HomeSlots)
     {
         cout << i + 1 << ": ";
         int j = 0;
-        while (gameState[i][j].rank != " ")
+        while (gameState[i][j].rank != ' ')
         {
-            cout << gameState[i][j].rank << gameState[i][j].suit << " ";
+            cout << gameState[i][j].rank << gameState[i][j].suit << ' ';
             j++;
         }
         cout << endl;
@@ -374,6 +364,7 @@ void displayBoard(Card **gameState, Card *freeCells, Card *HomeSlots)
 // still need to work on column to column move
 void columnToColumn(Card **gameState)
 {
+    //masla
     // This function implements in the user's move from column to column
     int col1, col2;
     cout << "Enter the column number from which you want to move the card: ";
@@ -383,49 +374,49 @@ void columnToColumn(Card **gameState)
     col1--;
     col2--;
     int i = 0;
-    while (gameState[col1][i].rank != " ")
+    while (gameState[col1][i].rank != ' ')
     {
         i++;
     }
     i--;
     int j = 0;
-    while (gameState[col2][j].rank != " ")
+    while (gameState[col2][j].rank != ' ')
     {
         j++;
     }
-    if (gameState[col2][j - 1].rank == " ")
+    if (gameState[col2][j - 1].rank == ' ')
     {
         gameState[col2][j - 1] = gameState[col1][i];
         gameState[col1][i].rank = ' ';
         gameState[col1][i].suit = ' ';
         gameState[col1][i].color = ' ';
     }
-    else if (gameState[col2][j - 1].rank != " ")
+    else if (gameState[col2][j - 1].rank != ' ')
     {
         if (gameState[col2][j - 1].color != gameState[col1][i].color)
         {
-            if (stoi(gameState[col2][j - 1].rank) == stoi(gameState[col1][i].rank) + 1)
+            if (gameState[col2][j - 1].rank == gameState[col1][i].rank + 1)
             {
                 gameState[col2][j] = gameState[col1][i];
                 gameState[col1][i].rank = ' ';
                 gameState[col1][i].suit = ' ';
                 gameState[col1][i].color = ' ';
             }
-            else if (gameState[col2][j - 1].rank == "K" && gameState[col1][i].rank == "Q")
+            else if (gameState[col2][j - 1].rank == 'K' && gameState[col1][i].rank == 'Q')
             {
                 gameState[col2][j] = gameState[col1][i];
                 gameState[col1][i].rank = ' ';
                 gameState[col1][i].suit = ' ';
                 gameState[col1][i].color = ' ';
             }
-            else if (gameState[col2][j - 1].rank == "Q" && gameState[col1][i].rank == "J")
+            else if (gameState[col2][j - 1].rank == 'Q' && gameState[col1][i].rank == 'J')
             {
                 gameState[col2][j] = gameState[col1][i];
                 gameState[col1][i].rank = ' ';
                 gameState[col1][i].suit = ' ';
                 gameState[col1][i].color = ' ';
             }
-            else if (gameState[col2][j - 1].rank == "J" && gameState[col1][i].rank == "T")
+            else if (gameState[col2][j - 1].rank == 'J' && gameState[col1][i].rank == 'T')
             {
                 gameState[col2][j] = gameState[col1][i];
                 gameState[col1][i].rank = ' ';
@@ -448,17 +439,17 @@ void columnToFreeCell(Card **gameState, Card *freeCells)
     cin >> col;
     col--;
     int i = 0;
-    while (gameState[col][i].rank != " ")
+    while (gameState[col][i].rank != ' ')
     {
         i++;
     }
     i--;
     int j = 0;
-    while (freeCells[j].rank != " ")
+    while (freeCells[j].rank != ' ')
     {
         j++;
     }
-    if (j < 5 && freeCells[j].rank == " ")
+    if (j < 5 && freeCells[j].rank == ' ')
     {
         freeCells[j] = gameState[col][i];
         // i need to dynamically change the size of columns.... uskay ilawa this works fine but i need to fix that..
@@ -478,7 +469,7 @@ void columnToFreeCell(Card **gameState, Card *freeCells)
         // }
         // delete[] old_array;
 
-        gameState[col][i].rank = " ";
+        gameState[col][i].rank = ' ';
         gameState[col][i].suit = ' ';
         gameState[col][i].color = ' ';
     }
@@ -505,14 +496,14 @@ void freeCellToColumn(Card **gameState, Card *freeCells)
     }
     else
     {
-        if (freeCells[freeCell].rank == " ")
+        if (freeCells[freeCell].rank == ' ')
         {
             cout << "\nInvalid move. The given freecell slot is empty!" << endl;
         }
         else
         {
             int i = 0;
-            while (gameState[col][i].rank != " ")
+            while (gameState[col][i].rank != ' ')
             {
                 i++;
             }
@@ -533,7 +524,7 @@ void freeCellToColumn(Card **gameState, Card *freeCells)
                     gameState[col][i + 2].suit = ' ';
                     gameState[col][i + 2].color = ' ';
                 }
-                else if (freeCells[freeCell].rank == "Q" && gameState[col][i].rank == "K")
+                else if (freeCells[freeCell].rank == 'Q' && gameState[col][i].rank == 'K')
                 {
                     gameState[col][i + 1].rank = freeCells[freeCell].rank;
                     gameState[col][i + 1].suit = freeCells[freeCell].suit;
@@ -547,7 +538,7 @@ void freeCellToColumn(Card **gameState, Card *freeCells)
                     gameState[col][i + 2].suit = ' ';
                     gameState[col][i + 2].color = ' ';
                 }
-                else if (freeCells[freeCell].rank == "J" && gameState[col][i].rank == "Q")
+                else if (freeCells[freeCell].rank == 'J' && gameState[col][i].rank == 'Q')
                 {
                     gameState[col][i + 1].rank = freeCells[freeCell].rank;
                     gameState[col][i + 1].suit = freeCells[freeCell].suit;
@@ -561,7 +552,7 @@ void freeCellToColumn(Card **gameState, Card *freeCells)
                     gameState[col][i + 2].suit = ' ';
                     gameState[col][i + 2].color = ' ';
                 }
-                else if (freeCells[freeCell].rank == "T" && gameState[col][i].rank == "J")
+                else if (freeCells[freeCell].rank == 'T' && gameState[col][i].rank == 'J')
                 {
                     gameState[col][i + 1].rank = freeCells[freeCell].rank;
                     gameState[col][i + 1].suit = freeCells[freeCell].suit;
