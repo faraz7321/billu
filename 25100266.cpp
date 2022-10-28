@@ -52,7 +52,7 @@ void initialiseDeck(Card *deck, int numberOfCards)
     {
         deck[i].color = 'R';
         deck[i].suit = 'D';
-        if(i>13 && i<22)
+        if (i > 13 && i < 22)
         {
             int temp = i - 13 + 1;
             char temp2 = char(temp) + '0';
@@ -69,7 +69,7 @@ void initialiseDeck(Card *deck, int numberOfCards)
     {
         deck[i].color = 'B';
         deck[i].suit = 'C';
-        if(i>26 && i<35)
+        if (i > 26 && i < 35)
         {
             int temp = i - 26 + 1;
             char temp2 = char(temp) + '0';
@@ -86,7 +86,7 @@ void initialiseDeck(Card *deck, int numberOfCards)
     {
         deck[i].color = 'R';
         deck[i].suit = 'H';
-        if(i>39 && i<48)
+        if (i > 39 && i < 48)
         {
             int temp = i - 39 + 1;
             char temp2 = char(temp) + '0';
@@ -105,7 +105,6 @@ void initialiseDeck(Card *deck, int numberOfCards)
         deck[i] = deck[random];
         deck[random] = temp;
     }
-    
 }
 
 int MovesByUser()
@@ -211,35 +210,160 @@ void displayBoard(Card **gameState, Card *freeCells, Card *HomeSlots)
 {
     // This function displays the board for the user to see.
 
-    cout << "Free Cells: ";
+    cout << "Free Cells:  | ";
     for (int i = 0; i < 4; i++)
     {
-        cout << (freeCells + i)->rank << (freeCells + i)->suit << " |";
+        cout << freeCells[i].rank << freeCells[i].suit << " |";
     }
-    cout << "\tHome Slots: ";
+    cout << "\tHome Slots:  | ";
     for (int i = 0; i < 4; i++)
     {
-        cout << (HomeSlots + i)->rank << (HomeSlots + i)->suit << " |";
+        cout << HomeSlots[i].rank << HomeSlots[i].suit << " |";
     }
     cout << endl;
     cout << "Columns: " << endl;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 8; i++)
     {
-        cout << i + 1 << ": ";
-        for (int j = 0; j < 7; j++)
+        cout << i+1 << ": ";
+        int j = 0;
+        while (gameState[i][j].rank != ' ')
         {
-            cout << (gameState[i][j]).rank << (gameState[i][j]).suit << " ";
+            cout << gameState[i][j].rank << gameState[i][j].suit << " ";
+            j++;
         }
         cout << endl;
     }
-    for (int i =4; i<8;i++)
+    
+}
+
+void columnToFreeCell(Card **gameState, Card *freeCells)
+{
+    // This function implements in the user's move from column to freecell
+    int col;
+    cout << "Enter the column number from which you want to move the card: ";
+    cin >> col;
+    col--;
+    int i = 0;
+    while (gameState[col][i].rank != ' ')
     {
-        cout << i + 1 << ": ";
-        for (int j = 0; j < 6; j++)
+        i++;
+    }
+    i--;
+    int j = 0;
+    while (freeCells[j].rank != ' ')
+    {
+        j++;
+    }
+    if (j < 5 && freeCells[j].rank == ' ')
+    {
+        freeCells[j] = gameState[col][i];
+        gameState[col][i].rank = ' ';
+        gameState[col][i].suit = ' ';
+        gameState[col][i].color = ' ';
+    }
+    else
+    {
+        cout << "\nInvalid move. Your freecells are full!" << endl;
+    }
+}
+
+void freeCellToColumn(Card **gameState, Card *freeCells)
+{
+    // This function implements the users move from any freecell to column
+    int col;
+    int freeCell;
+    cout << "Enter the column number to which you want to move the card: ";
+    cin >> col;
+    cout << "Enter the freecell number from which you want to move the card: ";
+    cin >> freeCell;
+    col--;
+    freeCell--;
+    if (freeCell > 4)
+    {
+        cout << "\nInvalid move. There are only 4 freecells :(" << endl;
+    }
+    else
+    {
+        if (freeCells[freeCell].rank == ' ')
         {
-            cout << (gameState[i][j]).rank << (gameState[i][j]).suit << " ";
+            cout << "\nInvalid move. The given freecell slot is empty!" << endl;
         }
-        cout << endl;
+        else
+        {
+            int i = 0;
+            while (gameState[col][i].rank != ' ')
+            {
+                i++;
+            }
+            i--;
+            if (freeCells[freeCell].color != gameState[col][i].color)
+            {
+                if (freeCells[freeCell].rank + char(1) == gameState[col][i].rank)
+                {
+                    gameState[col][i + 1].rank = freeCells[freeCell].rank;
+                    gameState[col][i + 1].suit = freeCells[freeCell].suit;
+                    gameState[col][i + 1].color = freeCells[freeCell].color;
+
+                    freeCells[freeCell].rank = ' ';
+                    freeCells[freeCell].suit = ' ';
+                    freeCells[freeCell].color = ' ';
+
+                    gameState[col][i + 2].rank = ' ';
+                    gameState[col][i + 2].suit = ' ';
+                    gameState[col][i + 2].color = ' ';
+                }
+                else if (freeCells[freeCell].rank == 'Q' && gameState[col][i].rank == 'K')
+                {
+                    gameState[col][i + 1].rank = freeCells[freeCell].rank;
+                    gameState[col][i + 1].suit = freeCells[freeCell].suit;
+                    gameState[col][i + 1].color = freeCells[freeCell].color;
+
+                    freeCells[freeCell].rank = ' ';
+                    freeCells[freeCell].suit = ' ';
+                    freeCells[freeCell].color = ' ';
+
+                    gameState[col][i + 2].rank = ' ';
+                    gameState[col][i + 2].suit = ' ';
+                    gameState[col][i + 2].color = ' ';
+                }
+                else if (freeCells[freeCell].rank == 'J' && gameState[col][i].rank == 'Q')
+                {
+                    gameState[col][i + 1].rank = freeCells[freeCell].rank;
+                    gameState[col][i + 1].suit = freeCells[freeCell].suit;
+                    gameState[col][i + 1].color = freeCells[freeCell].color;
+
+                    freeCells[freeCell].rank = ' ';
+                    freeCells[freeCell].suit = ' ';
+                    freeCells[freeCell].color = ' ';
+
+                    gameState[col][i + 2].rank = ' ';
+                    gameState[col][i + 2].suit = ' ';
+                    gameState[col][i + 2].color = ' ';
+                }
+                else if (freeCells[freeCell].rank == 'T' && gameState[col][i].rank == 'J')
+                {
+                    gameState[col][i + 1].rank = freeCells[freeCell].rank;
+                    gameState[col][i + 1].suit = freeCells[freeCell].suit;
+                    gameState[col][i + 1].color = freeCells[freeCell].color;
+
+                    freeCells[freeCell].rank = ' ';
+                    freeCells[freeCell].suit = ' ';
+                    freeCells[freeCell].color = ' ';
+
+                    gameState[col][i + 2].rank = ' ';
+                    gameState[col][i + 2].suit = ' ';
+                    gameState[col][i + 2].color = ' ';
+                }
+                else
+                {
+                    cout << "\nInvalid move. Please try again." << endl;
+                }
+            }
+            else
+            {
+                cout << "\nInvalid move. Please try again.\n" << endl;
+            }
+        }
     }
 }
 
@@ -269,7 +393,7 @@ int main()
     if (newGameOrLoadedGame == 1)
     {
         initialiseDeck(deck, numberOfCards);
-        initializeBoard(deck, numberOfCards, gameState, freeCells, HomeSlots);     
+        initializeBoard(deck, numberOfCards, gameState, freeCells, HomeSlots);
         displayBoard(gameState, freeCells, HomeSlots);
     }
     /* else if (newGameOrLoadedGame == 2)
@@ -314,101 +438,102 @@ int main()
 
      */
 
-    /*
-        int choice;
-        do
+    int choice;
+    do
+    {
+        choice = MovesByUser();
+        if (choice == 1)
         {
-            choice = MovesByUser();
-            if (choice == 1)
+            // TO DO:---- Implement functionality to doing a column to column move
+            int col1, col2;
+            cout << "Enter the column number from which you want to move the card: ";
+            cin >> col1;
+            cout << "Enter the column number to which you want to move the card: ";
+            cin >> col2;
+            if (gameState[col1 - 1][0].rank == '0')
             {
-                // TO DO:---- Implement functionality to doing a column to column move
-                int col1, col2;
-                cout << "Enter the column number from which you want to move the card: ";
-                cin >> col1;
-                cout << "Enter the column number to which you want to move the card: ";
-                cin >> col2;
-                if (gameState[col1 - 1][0].rank == '0')
-                {
-                    cout << "The column you entered is empty. Please enter a valid column number." << endl;
-                }
-                else if (gameState[col2 - 1][0].rank == '0')
-                {
-                    gameState[col2 - 1][0] = gameState[col1 - 1][0];
-                    gameState[col1 - 1][0].rank = '0';
-                }
-                else
-                {
-                    int i = 0;
-                    while (gameState[col2 - 1][i].rank != '0')
-                    {
-                        i++;
-                    }
-                    gameState[col2 - 1][i] = gameState[col1 - 1][0];
-                    gameState[col1 - 1][0].rank = '0';
-                }
+                cout << "The column you entered is empty. Please enter a valid column number." << endl;
             }
-            else if (choice == 2)
+            else if (gameState[col2 - 1][0].rank == '0')
             {
-                // TO DO:---- Implement functionality to doing a column to free cell move
-            }
-            else if (choice == 3)
-            {
-                // TO DO:---- Implement functionality to doing a free cell to column move
-            }
-            else if (choice == 4)
-            {
-                // TO DO:---- Implement functionality to doing a column to home slot move
-            }
-            else if (choice == 5)
-            {
-                // TO DO:---- Implement functionality to doing a free cell to home slot move
-            }
-            else if (choice == 6)
-            {
-                // TO DO:---- Save the game state in a file
-                ofstream fout;
-                fout.open("savedGame.txt");
-                if (fout.fail())
-                {
-                    cout << "Error opening file" << endl;
-                    exit(1);
-                }
-                for (int i = 0; i < 52; i++)
-                {
-                    fout << deck[i].color << " ";
-                    fout << deck[i].suit << " ";
-                    fout << deck[i].rank << " ";
-                }
-                for (int i = 0; i < 4; i++)
-                {
-                    fout << freeCells[i].color << " ";
-                    fout << freeCells[i].suit << " ";
-                    fout << freeCells[i].rank << " ";
-                }
-                for (int i = 0; i < 4; i++)
-                {
-                    fout << HomeSlots[i].color << " ";
-                    fout << HomeSlots[i].suit << " ";
-                    fout << HomeSlots[i].rank << " ";
-                }
-                for (int i = 0; i < 8; i++)
-                {
-                    for (int j = 0; j < 13; j++)
-                    {
-                        fout << gameState[i][j].color << " ";
-                        fout << gameState[i][j].suit << " ";
-                        fout << gameState[i][j].rank << " ";
-                    }
-                }
-                fout.close();
+                gameState[col2 - 1][0] = gameState[col1 - 1][0];
+                gameState[col1 - 1][0].rank = '0';
             }
             else
             {
-                cout << "INVALID INPUT" << endl;
+                int i = 0;
+                while (gameState[col2 - 1][i].rank != '0')
+                {
+                    i++;
+                }
+                gameState[col2 - 1][i] = gameState[col1 - 1][0];
+                gameState[col1 - 1][0].rank = '0';
             }
-        } while (choice == 1 || choice == 2 || choice == 3 || choice == 4 || choice == 5 || choice == 6);
-
-        */
+        }
+        else if (choice == 2)
+        {
+            // TO DO:---- Implement functionality to doing a column to free cell move
+            columnToFreeCell(gameState, freeCells);
+            displayBoard(gameState, freeCells, HomeSlots);
+        }
+        else if (choice == 3)
+        {
+            // TO DO:---- Implement functionality to doing a free cell to column move
+            freeCellToColumn(gameState, freeCells);
+            displayBoard(gameState, freeCells, HomeSlots);
+        }
+        else if (choice == 4)
+        {
+            // TO DO:---- Implement functionality to doing a column to home slot move
+        }
+        else if (choice == 5)
+        {
+            // TO DO:---- Implement functionality to doing a free cell to home slot move
+        }
+        else if (choice == 6)
+        {
+            // TO DO:---- Save the game state in a file
+            ofstream fout;
+            fout.open("savedGame.txt");
+            if (fout.fail())
+            {
+                cout << "Error opening file" << endl;
+                exit(1);
+            }
+            for (int i = 0; i < 52; i++)
+            {
+                fout << deck[i].color << " ";
+                fout << deck[i].suit << " ";
+                fout << deck[i].rank << " ";
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                fout << freeCells[i].color << " ";
+                fout << freeCells[i].suit << " ";
+                fout << freeCells[i].rank << " ";
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                fout << HomeSlots[i].color << " ";
+                fout << HomeSlots[i].suit << " ";
+                fout << HomeSlots[i].rank << " ";
+            }
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 13; j++)
+                {
+                    fout << gameState[i][j].color << " ";
+                    fout << gameState[i][j].suit << " ";
+                    fout << gameState[i][j].rank << " ";
+                }
+            }
+            fout.close();
+        }
+        else
+        {
+            cout << "INVALID INPUT" << endl;
+        }
+    } while (choice == 1 || choice == 2 || choice == 3 || choice == 4 || choice == 5 || choice == 6);
 
     delete[] deck;
     for (int i = 0; i < 8; i++)
