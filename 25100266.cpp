@@ -26,137 +26,86 @@ void initialiseDeck(Card *deck, int numberOfCards)
     */
 
     // for spades
+    deck[0].rank = 'A';
+    deck[9].rank = 'T';
+    deck[10].rank = 'J';
+    deck[11].rank = 'Q';
+    deck[12].rank = 'K';
     for (int i = 0; i < 13; i++)
     {
-        (deck + i)->color = 'B';
-        (deck + i)->suit = 'S';
-        if (i == 0)
+        deck[i].color = 'B';
+        deck[i].suit = 'S';
+        if (i > 0 && i < 9)
         {
-            (deck + i)->rank = 'A';
-        }
-        else if (i == 10)
-        {
-            (deck + i)->rank = 'J';
-        }
-        else if (i == 11)
-        {
-            (deck + i)->rank = 'Q';
-        }
-        else if (i == 12)
-        {
-            (deck + i)->rank = 'K';
-        }
-        else if (i == 9)
-        {
-            (deck + i)->rank = 'T';
-        }
-        else
-        {
-            (deck + i)->rank = i + 1;
+            int temp = i + 1;
+            char temp2 = char(temp) + '0';
+            deck[i].rank = temp2;
         }
     }
     // for diamonds
-    for (int i = 0; i < 13; i++)
+    deck[13].rank = 'A';
+    deck[22].rank = 'T';
+    deck[23].rank = 'J';
+    deck[24].rank = 'Q';
+    deck[25].rank = 'K';
+    for (int i = 13; i < 26; i++)
     {
-        (deck + i + 13)->color = 'R';
-        (deck + i + 13)->suit = 'D';
-        if (i == 0)
+        deck[i].color = 'R';
+        deck[i].suit = 'D';
+        if(i>13 && i<22)
         {
-            (deck + i + 13)->rank = 'A';
-        }
-        else if (i == 10)
-        {
-            (deck + i + 13)->rank = 'J';
-        }
-        else if (i == 11)
-        {
-            (deck + i + 13)->rank = 'Q';
-        }
-        else if (i == 12)
-        {
-            (deck + i + 13)->rank = 'K';
-        }
-        else if (i == 9)
-        {
-            (deck + i + 13)->rank = 'T';
-        }
-        else
-        {
-            (deck + i + 13)->rank = i + 1;
+            int temp = i - 13 + 1;
+            char temp2 = char(temp) + '0';
+            deck[i].rank = temp2;
         }
     }
     // for clubs
-    for (int i = 0; i < 13; i++)
+    deck[26].rank = 'A';
+    deck[35].rank = 'T';
+    deck[36].rank = 'J';
+    deck[37].rank = 'Q';
+    deck[38].rank = 'K';
+    for (int i = 26; i < 39; i++)
     {
-        (deck + i + 26)->color = 'B';
-        (deck + i + 26)->suit = 'C';
-        if (i == 0)
+        deck[i].color = 'B';
+        deck[i].suit = 'C';
+        if(i>26 && i<35)
         {
-            (deck + i + 26)->rank = 'A';
-        }
-        else if (i == 10)
-        {
-            (deck + i + 26)->rank = 'J';
-        }
-        else if (i == 11)
-        {
-            (deck + i + 26)->rank = 'Q';
-        }
-        else if (i == 12)
-        {
-            (deck + i + 26)->rank = 'K';
-        }
-        else if (i == 9)
-        {
-            (deck + i + 26)->rank = 'T';
-        }
-        else
-        {
-            (deck + i + 26)->rank = i + 1;
+            int temp = i - 26 + 1;
+            char temp2 = char(temp) + '0';
+            deck[i].rank = temp2;
         }
     }
     // for hearts
-    for (int i = 0; i < 13; i++)
+    deck[39].rank = 'A';
+    deck[48].rank = 'T';
+    deck[49].rank = 'J';
+    deck[50].rank = 'Q';
+    deck[51].rank = 'K';
+    for (int i = 39; i < 52; i++)
     {
-        (deck + i + 39)->color = 'R';
-        (deck + i + 39)->suit = 'H';
-        if (i == 0)
+        deck[i].color = 'R';
+        deck[i].suit = 'H';
+        if(i>39 && i<48)
         {
-            (deck + i + 39)->rank = 'A';
-        }
-        else if (i == 10)
-        {
-            (deck + i + 39)->rank = 'J';
-        }
-        else if (i == 11)
-        {
-            (deck + i + 39)->rank = 'Q';
-        }
-        else if (i == 12)
-        {
-            (deck + i + 39)->rank = 'K';
-        }
-        else if (i == 9)
-        {
-            (deck + i + 39)->rank = 'T';
-        }
-        else
-        {
-            (deck + i + 39)->rank = i + 1;
+            int temp = i - 39 + 1;
+            char temp2 = char(temp) + '0';
+            deck[i].rank = temp2;
         }
     }
-    //randomize elements
+    // for (int i = 0; i < 52; i++)
+    // {
+    //     cout << deck[i].suit << deck[i].rank << endl;
+    // }
+    // randomize elements
     for (int i = 0; i < 52; i++)
     {
         int random = rand() % 52;
-        Card temp = *(deck + i);
-        *(deck + i) = *(deck + random);
-        *(deck + random) = temp;
+        Card temp = deck[i];
+        deck[i] = deck[random];
+        deck[random] = temp;
     }
-    for (int i = 0; i < 52; i++)
-    {
-        cout << (deck + i)->suit << (deck + i)->rank << endl;
-    }
+    
 }
 
 int MovesByUser()
