@@ -223,10 +223,19 @@ void displayBoard(Card **gameState, Card *freeCells, Card *HomeSlots)
     }
     cout << endl;
     cout << "Columns: " << endl;
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 4; i++)
     {
         cout << i + 1 << ": ";
         for (int j = 0; j < 7; j++)
+        {
+            cout << (gameState[i][j]).rank << (gameState[i][j]).suit << " ";
+        }
+        cout << endl;
+    }
+    for (int i =4; i<8;i++)
+    {
+        cout << i + 1 << ": ";
+        for (int j = 0; j < 6; j++)
         {
             cout << (gameState[i][j]).rank << (gameState[i][j]).suit << " ";
         }
