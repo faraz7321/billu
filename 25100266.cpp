@@ -23,6 +23,7 @@ void initialiseDeck(Card *deck, int numberOfCards);
 void columnToFreeCell(Card **gameState, Card *freeCells);
 void freeCellToColumn(Card **gameState, Card *freeCells);
 void columnToHomeSlot(Card **gameState, Card *HomeSlots);
+void freeCellToHomeSlot(Card *freeCells, Card *HomeSlots);
 void displayBoard(Card **gameState, Card *freeCells, Card *HomeSlots);
 void LoadGame(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, Card *HomeSlots);
 void SaveGame(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, Card *HomeSlots);
@@ -87,6 +88,9 @@ int main()
             break;
         case 5:
             // TO DO:---- Implement functionality to doing a free cell to home slot movebreak;
+            freeCellToHomeSlot(freeCells, HomeSlots);
+            displayBoard(gameState, freeCells, HomeSlots);
+            break;
         case 6:
             // TO DO:---- Save the game state in a file
             SaveGame(deck, numberOfCards, gameState, freeCells, HomeSlots);
@@ -580,7 +584,6 @@ void freeCellToColumn(Card **gameState, Card *freeCells)
     }
 }
 
-
 void columnToHomeSlot(Card **gameState, Card *HomeSlots) // need to implement dynamic arrays
 {
     cout << "Enter the column number from which you want to move the card: ";
@@ -686,6 +689,103 @@ void columnToHomeSlot(Card **gameState, Card *HomeSlots) // need to implement dy
         gameState[col][i].rank = ' ';
         gameState[col][i].suit = ' ';
         gameState[col][i].color = ' ';
+    }
+    else
+    {
+        cout << "\nInvalid move. Please try again." << endl;
+    }
+}
+void freeCellToHomeSlot(Card *freeCells, Card *HomeSlots) // need to implement dynamic arrays
+{
+    cout << "Enter the free cell number from which you want to move the card: ";
+    int freeCell;
+    cin >> freeCell;
+    freeCell--;
+
+    cout << "Enter the homeslot column number to which you want to move the card: ";
+    int homeSlot;
+    cin >> homeSlot;
+    homeSlot--;
+
+    if (HomeSlots[homeSlot].rank == ' ')
+    {
+        if (freeCells[freeCell].rank == 'A')
+        {
+            HomeSlots[homeSlot].rank = freeCells[freeCell].rank;
+            HomeSlots[homeSlot].suit = freeCells[freeCell].suit;
+            HomeSlots[homeSlot].color = freeCells[freeCell].color;
+
+            freeCells[freeCell].rank = ' ';
+            freeCells[freeCell].suit = ' ';
+            freeCells[freeCell].color = ' ';
+        }
+        else
+        {
+            cout << "\nInvalid move. Please try again." << endl;
+        }
+    }
+    else if (freeCells[freeCell].suit == HomeSlots[homeSlot].suit)
+    {
+        if (freeCells[freeCell].rank == '2' && HomeSlots[homeSlot].rank == 'A')
+        {
+            HomeSlots[homeSlot].rank = freeCells[freeCell].rank;
+            HomeSlots[homeSlot].suit = freeCells[freeCell].suit;
+            HomeSlots[homeSlot].color = freeCells[freeCell].color;
+
+            freeCells[freeCell].rank = ' ';
+            freeCells[freeCell].suit = ' ';
+            freeCells[freeCell].color = ' ';
+        }
+        else if (freeCells[freeCell].rank == HomeSlots[homeSlot].rank + char(1))
+        {
+            HomeSlots[homeSlot].rank = freeCells[freeCell].rank;
+            HomeSlots[homeSlot].suit = freeCells[freeCell].suit;
+            HomeSlots[homeSlot].color = freeCells[freeCell].color;
+
+            freeCells[freeCell].rank = ' ';
+            freeCells[freeCell].suit = ' ';
+            freeCells[freeCell].color = ' ';
+        }
+    }
+    else if (freeCells[freeCell].rank == 'K' && HomeSlots[homeSlot].rank == 'Q')
+    {
+        HomeSlots[homeSlot].rank = freeCells[freeCell].rank;
+        HomeSlots[homeSlot].suit = freeCells[freeCell].suit;
+        HomeSlots[homeSlot].color = freeCells[freeCell].color;
+
+        freeCells[freeCell].rank = ' ';
+        freeCells[freeCell].suit = ' ';
+        freeCells[freeCell].color = ' ';
+    }
+    else if (freeCells[freeCell].rank == 'Q' && HomeSlots[homeSlot].rank == 'J')
+    {
+        HomeSlots[homeSlot].rank = freeCells[freeCell].rank;
+        HomeSlots[homeSlot].suit = freeCells[freeCell].suit;
+        HomeSlots[homeSlot].color = freeCells[freeCell].color;
+
+        freeCells[freeCell].rank = ' ';
+        freeCells[freeCell].suit = ' ';
+        freeCells[freeCell].color = ' ';
+    }
+    else if (freeCells[freeCell].rank == 'J' && HomeSlots[homeSlot].rank == 'T')
+    {
+        HomeSlots[homeSlot].rank = freeCells[freeCell].rank;
+        HomeSlots[homeSlot].suit = freeCells[freeCell].suit;
+        HomeSlots[homeSlot].color = freeCells[freeCell].color;
+
+        freeCells[freeCell].rank = ' ';
+        freeCells[freeCell].suit = ' ';
+        freeCells[freeCell].color = ' ';
+    }
+    else if (freeCells[freeCell].rank == 'T' && HomeSlots[homeSlot].rank == '9')
+    {
+        HomeSlots[homeSlot].rank = freeCells[freeCell].rank;
+        HomeSlots[homeSlot].suit = freeCells[freeCell].suit;
+        HomeSlots[homeSlot].color = freeCells[freeCell].color;
+
+        freeCells[freeCell].rank = ' ';
+        freeCells[freeCell].suit = ' ';
+        freeCells[freeCell].color = ' ';
     }
     else
     {
