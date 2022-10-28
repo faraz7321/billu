@@ -370,6 +370,42 @@ void columnToColumn(Card **gameState)
 {
     // masla
     //  This function implements in the user's move from column to column
+
+/*
+i want to do something like this:
+cout << "Enter the column number from which you want to move the card: ";
+int columnFrom;
+cin >> columnFrom;
+columnfrom--;
+int i = 0;
+while(gameState[columnFrom][i].rank != ' ')
+{
+    i++;
+}
+i--;
+cout << "Enter the number of cards you want to move: "
+int << numberOfCards;
+cin >> numberOfCards;
+cout << "Enter the column number to which you want to move the card: ";
+int columnTo;  
+cin >> columnTo;
+columnTo--;
+int j = 0;
+while(gameState[columnTo][j].rank != ' ')
+{
+    j++;
+}
+now i want to check if the move is valid or not. 
+so you run a loop from columnFrom to columnFrom - numberOfCards and check if the card is red and the next card is black or vice versa. 
+You also check if the cards are successive - i.e the next card is one less than the previous card, or if the next card is a king and the previous card is an ace, 
+or if the next card is a queen and the previous card is a king, or if the next card is a jack and the previous card is a queen, or if the next card is a ten and the previous card is a 9.
+etc.
+then if the card is valid, you check if card[columnFrom][i - numberOfCards] is greater than card[columnTo][i].rank. (need to check all the corner cases such as queen king etc)
+if it is, then you move the card. 
+else you print an error message. 
+*/
+
+
     int col1, col2;
     cout << "Enter the column number from which you want to move the card: ";
     cin >> col1;
