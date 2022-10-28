@@ -56,7 +56,7 @@ int main()
     }
     else if (newGameOrLoadedGame == 2)
     {
-        //TODO
+        // TODO
         LoadGame(deck, numberOfCards, gameState, freeCells, HomeSlots);
     }
 
@@ -71,12 +71,12 @@ int main()
             columnToColumn(gameState);
             displayBoard(gameState, freeCells, HomeSlots);
             break;
-        case 2: //dynamic
+        case 2: // dynamic
             columnToFreeCell(gameState, freeCells);
             displayBoard(gameState, freeCells, HomeSlots);
             break;
         case 3:
-            //a free cell to column move
+            // a free cell to column move
             freeCellToColumn(gameState, freeCells);
             displayBoard(gameState, freeCells, HomeSlots);
             break;
@@ -364,8 +364,8 @@ void displayBoard(Card **gameState, Card *freeCells, Card *HomeSlots)
 // still need to work on column to column move
 void columnToColumn(Card **gameState)
 {
-    //masla
-    // This function implements in the user's move from column to column
+    // masla
+    //  This function implements in the user's move from column to column
     int col1, col2;
     cout << "Enter the column number from which you want to move the card: ";
     cin >> col1;
@@ -582,4 +582,112 @@ void freeCellToColumn(Card **gameState, Card *freeCells)
 
 void columnToHomeSlot(Card **gameState, Card *HomeSlots)
 {
+    cout << "Enter the column number from which you want to move the card: ";
+    int col;
+    cin >> col;
+    col--;
+
+    int i = 0;
+    while (gameState[col][i].rank != ' ')
+    {
+        i++;
+    }
+    i--;
+
+    cout << "Enter the homeslot column number to which you want to move the card: ";
+    int homeSlot;
+    cin >> homeSlot;
+    homeSlot--;
+
+    if (HomeSlots[homeSlot].rank == ' ')
+    {
+        if (gameState[col][i].rank == 'A')
+        {
+            HomeSlots[homeSlot].rank = gameState[col][i].rank;
+            HomeSlots[homeSlot].suit = gameState[col][i].suit;
+            HomeSlots[homeSlot].color = gameState[col][i].color;
+
+            gameState[col][i].rank = ' ';
+            gameState[col][i].suit = ' ';
+            gameState[col][i].color = ' ';
+        }
+        else
+        {
+            cout << "\nInvalid move. Please try again." << endl;
+        }
+    }
+    else if (i == 0)
+    {
+        cout << "\nInvalid move. Please try again." << endl;
+    }
+
+    if (gameState[col][i].suit == HomeSlots[homeSlot].suit)
+    {
+        cout << "The suits are the same" << endl;
+        if (gameState[col][i].rank == '2' && HomeSlots[homeSlot].rank == 'A')
+        {
+            cout << "The ranks are succesive" << endl;
+            HomeSlots[homeSlot].rank = gameState[col][i].rank;
+            HomeSlots[homeSlot].suit = gameState[col][i].suit;
+            HomeSlots[homeSlot].color = gameState[col][i].color;
+
+            gameState[col][i].rank = ' ';
+            gameState[col][i].suit = ' ';
+            gameState[col][i].color = ' ';
+        }
+        else if (gameState[col][i].rank == HomeSlots[homeSlot].rank + char(1))
+        {
+            HomeSlots[homeSlot].rank = gameState[col][i].rank;
+            HomeSlots[homeSlot].suit = gameState[col][i].suit;
+            HomeSlots[homeSlot].color = gameState[col][i].color;
+
+            gameState[col][i].rank = ' ';
+            gameState[col][i].suit = ' ';
+            gameState[col][i].color = ' ';
+        }
+    }
+    else if (gameState[col][i].rank == 'K' && HomeSlots[homeSlot].rank == 'Q')
+    {
+        HomeSlots[homeSlot].rank = gameState[col][i].rank;
+        HomeSlots[homeSlot].suit = gameState[col][i].suit;
+        HomeSlots[homeSlot].color = gameState[col][i].color;
+
+        gameState[col][i].rank = ' ';
+        gameState[col][i].suit = ' ';
+        gameState[col][i].color = ' ';
+    }
+    else if (gameState[col][i].rank == 'Q' && HomeSlots[homeSlot].rank == 'J')
+    {
+        HomeSlots[homeSlot].rank = gameState[col][i].rank;
+        HomeSlots[homeSlot].suit = gameState[col][i].suit;
+        HomeSlots[homeSlot].color = gameState[col][i].color;
+
+        gameState[col][i].rank = ' ';
+        gameState[col][i].suit = ' ';
+        gameState[col][i].color = ' ';
+    }
+    else if (gameState[col][i].rank == 'J' && HomeSlots[homeSlot].rank == 'T')
+    {
+        HomeSlots[homeSlot].rank = gameState[col][i].rank;
+        HomeSlots[homeSlot].suit = gameState[col][i].suit;
+        HomeSlots[homeSlot].color = gameState[col][i].color;
+
+        gameState[col][i].rank = ' ';
+        gameState[col][i].suit = ' ';
+        gameState[col][i].color = ' ';
+    }
+    else if (gameState[col][i].rank == 'T' && HomeSlots[homeSlot].rank == '9')
+    {
+        HomeSlots[homeSlot].rank = gameState[col][i].rank;
+        HomeSlots[homeSlot].suit = gameState[col][i].suit;
+        HomeSlots[homeSlot].color = gameState[col][i].color;
+
+        gameState[col][i].rank = ' ';
+        gameState[col][i].suit = ' ';
+        gameState[col][i].color = ' ';
+    }
+    else
+    {
+        cout << "\nInvalid move. Please try again." << endl;
+    }
 }
