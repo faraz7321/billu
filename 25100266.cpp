@@ -580,7 +580,8 @@ void freeCellToColumn(Card **gameState, Card *freeCells)
     }
 }
 
-void columnToHomeSlot(Card **gameState, Card *HomeSlots)
+
+void columnToHomeSlot(Card **gameState, Card *HomeSlots) // need to implement dynamic arrays
 {
     cout << "Enter the column number from which you want to move the card: ";
     int col;
