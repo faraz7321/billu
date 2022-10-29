@@ -218,6 +218,8 @@ bool LoadGameState(Card **gameState, string filename)
             {
                 continue;
             }
+            // need to change condition. writes garbage value, segmentation faults
+
             for (int j = 0; j < 13; j++)
             {
                 stringstream ss(line);
@@ -225,8 +227,8 @@ bool LoadGameState(Card **gameState, string filename)
                 gameState[i][j].color = card[0];
                 gameState[i][j].suit = card[1];
                 gameState[i][j].rank = card[2];
-                i++;
             }
+            i++;
         }
         getItems.close();
         return true;
@@ -257,7 +259,7 @@ bool SaveDeck(Card *deck, int numberOfCards, string filename)
         return false;
     }
 }
-bool saveGameState(Card **gameState, string filename)
+bool SaveGameState(Card **gameState, string filename)
 {
     // This variable for read data from file
     ofstream myfile;
@@ -269,9 +271,10 @@ bool saveGameState(Card **gameState, string filename)
 
         for (int i = 0; i < 8; i++)
         {
+            // need to change condition. writes garbage value, segmentation faults
             for (int j = 0; j < 13; j++)
             {
-                myfile << gameState[i][j].color << "," << gameState[i][j].suit << "," << gameState[i][j].rank << ";";
+                myfile << gameState[i][j].color << gameState[i][j].suit << gameState[i][j].rank << ";";
             }
             myfile << endl;
         }
@@ -287,9 +290,9 @@ bool saveGameState(Card **gameState, string filename)
 int MovesByUser()
 {
     bool valid = true;
+    int choice = 0;
     while (valid)
     {
-        int choice;
         cout << "Press 1 for column to column move" << endl
              << "Press 2 for column to free cell move" << endl
              << "Press 3 for free cell to column move" << endl
@@ -298,7 +301,7 @@ int MovesByUser()
              << "Press 6 to save your unfinished game" << endl;
         cin >> choice;
 
-        if (choice == 1 || choice == 2 || choice == 3 || choice == 4 || choice == 5 || choice == 6)
+        if (choice >= 1 && choice <= 6)
         {
             return choice;
             valid = false;
@@ -309,6 +312,7 @@ int MovesByUser()
                  << endl;
         }
     }
+    return choice;
 }
 
 int GameOptions()
@@ -319,10 +323,10 @@ int GameOptions()
 
     */
     bool valid = true;
+    int choice = 0;
     while (valid)
     {
 
-        int choice;
         cout << "Press 1 to start new game" << endl;
         cout << "Press 2 to resume saved game" << endl;
         cin >> choice;
@@ -337,6 +341,7 @@ int GameOptions()
                  << endl;
         }
     }
+    return choice;
 }
 
 void initializeBoard(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, Card *HomeSlots)
@@ -554,7 +559,7 @@ void columnToFreeCell(Card **gameState, Card *freeCells)
         gameState[col][i].rank = ' ';
         gameState[col][i].suit = ' ';
         gameState[col][i].color = ' ';
-        
+
         // int x = 0;
         // while (gameState[col][x].rank != ' ')
         // {
@@ -562,7 +567,7 @@ void columnToFreeCell(Card **gameState, Card *freeCells)
         //     x++;
         // }
         // cout << "The size after transfer is: " << x << endl;
-        //ya Allah shukar it works.
+        // ya Allah shukar it works.
     }
     else
     {
