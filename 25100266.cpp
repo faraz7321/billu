@@ -25,8 +25,10 @@ void freeCellToColumn(Card **gameState, Card *freeCells);
 void columnToHomeSlot(Card **gameState, Card *HomeSlots);
 void freeCellToHomeSlot(Card *freeCells, Card *HomeSlots);
 void displayBoard(Card **gameState, Card *freeCells, Card *HomeSlots);
-void LoadGame(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, Card *HomeSlots);
-void SaveGame(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, Card *HomeSlots);
+bool LoadDeck(Card *deck, int numberOfCards, string filename);
+bool LoadGameState(Card **gameState, string filename);
+bool SaveDeck(Card *deck, int numberOfCards, string filename);
+bool SaveGameState(Card **gameState, string filename);
 void initializeBoard(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, Card *HomeSlots);
 
 int main()
@@ -58,7 +60,10 @@ int main()
     else if (newGameOrLoadedGame == 2)
     {
         // TODO
-        LoadGame(deck, numberOfCards, gameState, freeCells, HomeSlots);
+        LoadDeck(deck, numberOfCards, "deck.txt");
+        LoadDeck(freeCells, 4, "freeCells.txt");
+        LoadDeck(HomeSlots, 4, "HomeSlots.txt");
+        LoadGameState(gameState, "gameState.txt");
     }
 
     do
@@ -93,7 +98,10 @@ int main()
             break;
         case 6:
             // TO DO:---- Save the game state in a file
-            SaveGame(deck, numberOfCards, gameState, freeCells, HomeSlots);
+            SaveDeck(deck, numberOfCards, "deck.txt");
+            SaveDeck(freeCells, 4, "freeCells.txt");
+            SaveDeck(HomeSlots, 4, "HomeSlots.txt");
+            SaveGameState(gameState, "gameState.txt");
             break;
         default:
             cout << "INVALID INPUT" << endl;
@@ -155,83 +163,125 @@ void PrintDeck(Card *deck, int numberOfCards)
         }
     }
 }
-void LoadGame(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, Card *HomeSlots)
+bool LoadDeck(Card *deck, int numberOfCards, string filename)
 {
-    ifstream fin;
-    fin.open("savedGame.txt");
-    if (fin.fail())
+    int i = 0;
+    ifstream getItems(filename);
+    string rank, suit, color;
+    string line;
+    if (!getItems.is_open())
     {
-        cout << "Error opening file" << endl;
-        exit(1);
+        cout << "Item file failed to open" << endl;
+        return false;
     }
-    for (int i = 0; i < 52; i++)
+    else
     {
-        fin >> deck[i].color;
-        fin >> deck[i].suit;
-        fin >> deck[i].rank;
-    }
-    for (int i = 0; i < 4; i++)
-    {
-        fin >> freeCells[i].color;
-        fin >> freeCells[i].suit;
-        fin >> freeCells[i].rank;
-    }
-    for (int i = 0; i < 4; i++)
-    {
-        fin >> HomeSlots[i].color;
-        fin >> HomeSlots[i].suit;
-        fin >> HomeSlots[i].rank;
-    }
-    for (int i = 0; i < 8; i++)
-    {
-        gameState[i] = new Card[13];
-        for (int j = 0; j < 13; j++)
+        while (!getItems.eof())
         {
-            fin >> gameState[i][j].color;
-            fin >> gameState[i][j].suit;
-            fin >> gameState[i][j].rank;
+            std::getline(getItems, line);
+            if (line == "")
+            {
+                continue;
+            }
+            stringstream ss(line);
+            std::getline(ss, color, ',');
+            deck[i].color = color[0];
+
+            std::getline(ss, suit, ',');
+            deck[i].suit = suit[0];
+
+            std::getline(ss, rank, ',');
+            deck[i].rank = rank[0];
+            i++;
         }
+        getItems.close();
+        return true;
     }
-    fin.close();
+}
+bool LoadGameState(Card **gameState, string filename)
+{
+    int i = 0;
+    ifstream getItems(filename);
+    string card;
+    string line;
+    if (!getItems.is_open())
+    {
+        cout << "Item file failed to open" << endl;
+        return false;
+    }
+    else
+    {
+        while (!getItems.eof())
+        {
+            std::getline(getItems, line);
+            if (line == "")
+            {
+                continue;
+            }
+            for (int j = 0; j < 13; j++)
+            {
+                stringstream ss(line);
+                std::getline(ss, card, ';');
+                gameState[i][j].color = card[0];
+                gameState[i][j].suit = card[1];
+                gameState[i][j].rank = card[2];
+                i++;
+            }
+        }
+        getItems.close();
+        return true;
+    }
 }
 
-void SaveGame(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, Card *HomeSlots)
+bool SaveDeck(Card *deck, int numberOfCards, string filename)
 {
-    ofstream fout;
-    fout.open("savedGame.txt");
-    if (fout.fail())
+    // This variable for read data from file
+    ofstream myfile;
+    myfile.open(filename);
+    // This function will check if the file open then write data from file
+    if (myfile.is_open())
     {
-        cout << "Error opening file" << endl;
-        exit(1);
-    }
-    for (int i = 0; i < 52; i++)
-    {
-        fout << deck[i].color << ' ';
-        fout << deck[i].suit << ' ';
-        fout << deck[i].rank << ' ';
-    }
-    for (int i = 0; i < 4; i++)
-    {
-        fout << freeCells[i].color << ' ';
-        fout << freeCells[i].suit << ' ';
-        fout << freeCells[i].rank << ' ';
-    }
-    for (int i = 0; i < 4; i++)
-    {
-        fout << HomeSlots[i].color << ' ';
-        fout << HomeSlots[i].suit << ' ';
-        fout << HomeSlots[i].rank << ' ';
-    }
-    for (int i = 0; i < 8; i++)
-    {
-        for (int j = 0; j < 13; j++)
+        // These lines will write all array data to the file and make a comma separated file
+
+        for (int i = 0; i < numberOfCards; i++)
         {
-            fout << gameState[i][j].color << ' ';
-            fout << gameState[i][j].suit << ' ';
-            fout << gameState[i][j].rank << ' ';
+            myfile << deck[i].color << deck[i].suit << deck[i].rank << endl;
         }
+        myfile << endl;
+        myfile.close();
+        return true;
     }
-    fout.close();
+    else
+    {
+        // If there is error while opening file this function will return false
+        return false;
+    }
+}
+bool saveGameState(Card **gameState, string filename)
+{
+    // This variable for read data from file
+    ofstream myfile;
+    myfile.open(filename);
+    // This function will check if the file open then write data from file
+    if (myfile.is_open())
+    {
+        // These lines will write all array data to the file and make a comma separated file
+
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 13; j++)
+            {
+                myfile << gameState[i][j].color << "," << gameState[i][j].suit << "," << gameState[i][j].rank << ";";
+            }
+            myfile << endl;
+        }
+        return true;
+    }
+    else
+    {
+        // If there is error while opening file this function will return false
+        return false;
+    }
 }
 
 int MovesByUser()
@@ -371,40 +421,39 @@ void columnToColumn(Card **gameState)
     // masla
     //  This function implements in the user's move from column to column
 
-/*
-i want to do something like this:
-cout << "Enter the column number from which you want to move the card: ";
-int columnFrom;
-cin >> columnFrom;
-columnfrom--;
-int i = 0;
-while(gameState[columnFrom][i].rank != ' ')
-{
-    i++;
-}
-i--;
-cout << "Enter the number of cards you want to move: "
-int << numberOfCards;
-cin >> numberOfCards;
-cout << "Enter the column number to which you want to move the card: ";
-int columnTo;  
-cin >> columnTo;
-columnTo--;
-int j = 0;
-while(gameState[columnTo][j].rank != ' ')
-{
-    j++;
-}
-now i want to check if the move is valid or not. 
-so you run a loop from columnFrom to columnFrom - numberOfCards and check if the card is red and the next card is black or vice versa. 
-You also check if the cards are successive - i.e the next card is one less than the previous card, or if the next card is a king and the previous card is an ace, 
-or if the next card is a queen and the previous card is a king, or if the next card is a jack and the previous card is a queen, or if the next card is a ten and the previous card is a 9.
-etc.
-then if the card is valid, you check if card[columnFrom][i - numberOfCards] is greater than card[columnTo][i].rank. (need to check all the corner cases such as queen king etc)
-if it is, then you move the card. 
-else you print an error message. 
-*/
-
+    /*
+    i want to do something like this:
+    cout << "Enter the column number from which you want to move the card: ";
+    int columnFrom;
+    cin >> columnFrom;
+    columnfrom--;
+    int i = 0;
+    while(gameState[columnFrom][i].rank != ' ')
+    {
+        i++;
+    }
+    i--;
+    cout << "Enter the number of cards you want to move: "
+    int << numberOfCards;
+    cin >> numberOfCards;
+    cout << "Enter the column number to which you want to move the card: ";
+    int columnTo;
+    cin >> columnTo;
+    columnTo--;
+    int j = 0;
+    while(gameState[columnTo][j].rank != ' ')
+    {
+        j++;
+    }
+    now i want to check if the move is valid or not.
+    so you run a loop from columnFrom to columnFrom - numberOfCards and check if the card is red and the next card is black or vice versa.
+    You also check if the cards are successive - i.e the next card is one less than the previous card, or if the next card is a king and the previous card is an ace,
+    or if the next card is a queen and the previous card is a king, or if the next card is a jack and the previous card is a queen, or if the next card is a ten and the previous card is a 9.
+    etc.
+    then if the card is valid, you check if card[columnFrom][i - numberOfCards] is greater than card[columnTo][i].rank. (need to check all the corner cases such as queen king etc)
+    if it is, then you move the card.
+    else you print an error message.
+    */
 
     int col1, col2;
     cout << "Enter the column number from which you want to move the card: ";
