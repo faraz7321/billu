@@ -64,6 +64,7 @@ int main()
         LoadDeck(freeCells, 4, "freeCells.txt");
         LoadDeck(HomeSlots, 4, "HomeSlots.txt");
         LoadGameState(gameState, "gameState.txt");
+        displayBoard(gameState, freeCells, HomeSlots);
     }
 
     do
@@ -179,7 +180,7 @@ bool LoadDeck(Card *deck, int numberOfCards, string filename)
         while (!getItems.eof())
         {
             std::getline(getItems, line);
-            if (line == "")
+            if (line == " " || line == "")
             {
                 continue;
             }
@@ -200,7 +201,9 @@ bool LoadDeck(Card *deck, int numberOfCards, string filename)
 }
 bool LoadGameState(Card **gameState, string filename)
 {
+    cout << "load game state\n";
     int i = 0;
+    int j = 0;
     ifstream getItems(filename);
     string card;
     string line;
@@ -219,14 +222,15 @@ bool LoadGameState(Card **gameState, string filename)
                 continue;
             }
             // need to change condition. writes garbage value, segmentation faults
-
-            for (int j = 0; j < 13; j++)
+            j = 0;
+            while (gameState[i][j].rank != '\0' )
             {
                 stringstream ss(line);
                 std::getline(ss, card, ';');
                 gameState[i][j].color = card[0];
                 gameState[i][j].suit = card[1];
                 gameState[i][j].rank = card[2];
+                j++;
             }
             i++;
         }
@@ -261,6 +265,7 @@ bool SaveDeck(Card *deck, int numberOfCards, string filename)
 }
 bool SaveGameState(Card **gameState, string filename)
 {
+    int j = 0;
     // This variable for read data from file
     ofstream myfile;
     myfile.open(filename);
@@ -272,9 +277,11 @@ bool SaveGameState(Card **gameState, string filename)
         for (int i = 0; i < 8; i++)
         {
             // need to change condition. writes garbage value, segmentation faults
-            for (int j = 0; j < 13; j++)
+            j = 0;
+            while (gameState[i][j].rank != ' ')
             {
                 myfile << gameState[i][j].color << gameState[i][j].suit << gameState[i][j].rank << ";";
+                j++;
             }
             myfile << endl;
         }
