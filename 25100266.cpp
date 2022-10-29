@@ -541,26 +541,28 @@ void columnToFreeCell(Card **gameState, Card *freeCells)
     if (j < 5 && freeCells[j].rank == ' ')
     {
         freeCells[j] = gameState[col][i];
-        // i need to dynamically change the size of columns.... uskay ilawa this works fine but i need to fix that..
 
-        // Card **old_array = gameState;
-        // gameState[col] = new Card[i];
-        //  for (int k = 0; k < i; k++)
-        //  {
-        //      cout << "print oldarr[col][k]: " << old_array[col][k].rank << old_array[col][k].suit << endl;
-        //      gameState[col][k] = old_array[col][k];
-        //      cout << "now print game state: " << gameState[col][k].rank << gameState[col][k].suit << endl;
-        //  }
-
-        // for (int x = 0; x < 8; x++)
-        // {
-        //     delete[] old_array[x];
-        // }
-        // delete[] old_array;
+        Card *temp = new Card[i + 1];
+        // cout << "The size before transfer is: " << i+1 << endl;
+        for (int k = 0; k < i; k++)
+        {
+            temp[k] = gameState[col][k];
+        }
+        delete[] gameState[col];
+        gameState[col] = temp;
 
         gameState[col][i].rank = ' ';
         gameState[col][i].suit = ' ';
         gameState[col][i].color = ' ';
+        
+        // int x = 0;
+        // while (gameState[col][x].rank != ' ')
+        // {
+        //     cout << "Running loop\n";
+        //     x++;
+        // }
+        // cout << "The size after transfer is: " << x << endl;
+        //ya Allah shukar it works.
     }
     else
     {
