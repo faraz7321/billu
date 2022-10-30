@@ -1,6 +1,7 @@
 #include <iostream>
-#include <bits/stdc++.h>
-#include <stdlib.h>
+#include <fstream>
+#include <sstream>
+#include <ctime>
 
 using namespace std;
 
@@ -12,156 +13,112 @@ struct Card
 
     /*Feel free to add any member function IF you want to*/
 };
-class Game
-{
-public:
-    // attributes
-    Card **gameState, *freeCells, *homeSlots, *deck;
-    int gameStateRow, gameStateColumn, freeCellsSize, homeSlotsSize, numberOfCards;
-    // util functions
-    int MovesByUser();
-    int GameOptions();
-    void columnToColumn();
-    void shuffle();
-    void initialiseDeck();
-    void columnToFreeCell();
-    void freeCellToColumn();
-    void columnToHomeSlot();
-    void freeCellToHomeSlot();
-    void displayBoard();
-    bool LoadCard(Card *cards, int n, string filename);
-    bool LoadGameState();
-    bool SaveDeck(Card *cards, int n, string filename);
-    bool SaveGameState();
-    void initializeBoard();
-    // constructor
-    Game();
-    Game(int n);
-    // destructor
-    ~Game();
-};
-Game::Game()
-{
-    homeSlotsSize = 4;
-    freeCellsSize = 4;
-    numberOfCards = 52;
-    gameStateColumn = 8;
-    gameStateRow = 7;
-    deck = new Card[52];      // this array will store the deck
-    freeCells[freeCellsSize]; // this array will be used to store the cards in the free cells
-    homeSlots[homeSlotsSize]; // this array will be used to store the cards in the home slots.
-    gameState = new Card *[gameStateColumn];
 
-    // FIX
-    for (int i = 0; i < 4; i++)
-    {
-        gameState[i] = new Card[gameStateColumn];
-    }
-    for (int i = 4; i < gameStateColumn; i++)
-    {
-        gameState[i] = new Card[gameStateRow];
-    }
-}
-Game::Game(int n)
+int MovesByUser();
+int GameOptions();
+void displayBoard(Card **gameState, Card *freeCells, Card *HomeSlots);
+
+void initializeBoard(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, Card *HomeSlots);
+void initialiseDeck(Card *deck, int numberOfCards);
+void shuffle(Card *deck, int numberOfCards);
+
+void columnToColumn(Card **gameState, Card *freeCells);
+void columnToFreeCell(Card **gameState, Card *freeCells);
+void freeCellToColumn(Card **gameState, Card *freeCells);
+void columnToHomeSlot(Card **gameState, Card *HomeSlots);
+void freeCellToHomeSlot(Card *freeCells, Card *HomeSlots);
+
+bool LoadCard(Card *deck, string filename);
+bool LoadGameState(Card **gameState, string filename);
+bool SaveCard(Card *deck, string filename);
+bool SaveGameState(Card **gameState, string filename);
+
+int main()
 {
-    homeSlotsSize = 4;
-    freeCellsSize = 4;
-    numberOfCards = 52;
-    gameStateColumn = 8;
-    gameStateRow = 7;
-    deck = new Card[n];       // this array will store the deck
-    freeCells[freeCellsSize]; // this array will be used to store the cards in the free cells
-    homeSlots[homeSlotsSize]; // this array will be used to store the cards in the home slots.
-    gameState = new Card *[gameStateColumn];
-    // FIX
+    int choice = 0;
+    int numberOfCards = 52;
+    Card *deck = new Card[numberOfCards]; // this array will store the deck
+    Card freeCells[4];                    // this array will be used to store the cards in the free cells
+    Card HomeSlots[4];                    // this array will be used to store the cards in the home slots.
+    Card **gameState = new Card *[8];     // this is a 2-D array which will store your game's condition at any given point. There will a total of 8 columns. Use this to print display your game.
+
     for (int i = 0; i < 4; i++)
     {
-        gameState[i] = new Card[gameStateColumn];
+        gameState[i] = new Card[8];
     }
     for (int i = 4; i < 8; i++)
     {
-        gameState[i] = new Card[gameStateRow];
+        gameState[i] = new Card[7];
     }
-}
-Game::~Game()
-{
-    delete[] deck;
-    for (int i = 0; i < 8; i++)
-    {
-        delete[] gameState[i];
-    }
-    delete[] gameState;
-}
-int main()
-{
-    int numberOfCards = 52;
-    Game *gameObj = new Game{numberOfCards};
-    int choice = 0;
-
-    int newGameOrLoadedGame = gameObj->GameOptions();
+    int newGameOrLoadedGame = GameOptions();
 
     if (newGameOrLoadedGame == 1)
     {
-        gameObj->initialiseDeck();
-        gameObj->shuffle();
-        gameObj->initializeBoard();
-        gameObj->displayBoard();
+        initialiseDeck(deck, numberOfCards);
+        shuffle(deck, numberOfCards);
+        initializeBoard(deck, numberOfCards, gameState, freeCells, HomeSlots);
+        displayBoard(gameState, freeCells, HomeSlots);
     }
     else if (newGameOrLoadedGame == 2)
     {
         // TODO
-        // gameObj->LoadCard("deck.txt");
-        // gameObj->LoadCard("freeCells.txt");
-        // gameObj->LoadCard("HomeSlots.txt");
-        // gameObj->LoadGameState();
-        // gameObj->displayBoard();
+
+        LoadCard(freeCells, "freeCells.txt");
+        LoadCard(HomeSlots, "HomeSlots.txt");
+        LoadGameState(gameState, "gameState.txt");
+        displayBoard(gameState, freeCells, HomeSlots);
     }
 
     do
     {
-        choice = gameObj->MovesByUser();
+        choice = MovesByUser();
         switch (choice)
         {
         case 1:
             // TO DO:---- Implement functionality to doing a column to column move
             // meed to fix this yet...
-            gameObj->columnToColumn();
-            gameObj->displayBoard();
+            columnToColumn(gameState, freeCells);
+            displayBoard(gameState, freeCells, HomeSlots);
             break;
         case 2: // dynamic
-            gameObj->columnToFreeCell();
-            gameObj->displayBoard();
+            columnToFreeCell(gameState, freeCells);
+            displayBoard(gameState, freeCells, HomeSlots);
             break;
         case 3:
             // a free cell to column move
-            gameObj->freeCellToColumn();
-            gameObj->displayBoard();
+            freeCellToColumn(gameState, freeCells);
+            displayBoard(gameState, freeCells, HomeSlots);
             break;
         case 4:
             // TO DO:---- Implement functionality to doing a column to home slot move
-            gameObj->columnToHomeSlot();
-            gameObj->displayBoard();
+            columnToHomeSlot(gameState, HomeSlots);
+            displayBoard(gameState, freeCells, HomeSlots);
             break;
         case 5:
             // TO DO:---- Implement functionality to doing a free cell to home slot movebreak;
-            gameObj->freeCellToHomeSlot();
-            gameObj->displayBoard();
+            freeCellToHomeSlot(freeCells, HomeSlots);
+            displayBoard(gameState, freeCells, HomeSlots);
             break;
         case 6:
             // TO DO:---- Save the game state in a file
-            // gameObj->SaveDeck("deck.txt");
-            // gameObj->SaveDeck("freeCells.txt");
-            // gameObj->SaveDeck("HomeSlots.txt");
-            // gameObj->SaveGameState();
+            SaveCard(freeCells, "freeCells.txt");
+            SaveCard(HomeSlots, "HomeSlots.txt");
+            SaveGameState(gameState, "gameState.txt");
             break;
         default:
             cout << "INVALID INPUT" << endl;
         }
     } while (choice >= 1 && choice <= 6);
 
+    delete[] deck;
+    for (int i = 0; i < 8; i++)
+    {
+        delete[] gameState[i];
+    }
+    delete[] gameState;
     return 0;
 }
-void Game::shuffle()
+void shuffle(Card *deck, int numberOfCards)
 {
     srand(time(0));
     for (int i = 0; i < numberOfCards; i++)
@@ -171,7 +128,7 @@ void Game::shuffle()
         swap(deck[i], deck[r]);
     }
 }
-void Game::initialiseDeck()
+void initialiseDeck(Card *deck, int numberOfCards)
 {
     char rankArray[13] = {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'};
     char suitArr[4] = {'S', 'C', 'D', 'H'};
@@ -197,12 +154,22 @@ void Game::initialiseDeck()
         }
     }
 }
-
-bool Game::LoadCard(Card *cards, int n, string filename)
+void PrintDeck(Card *deck, int numberOfCards)
+{
+    for (int i = 0; i < numberOfCards; i++)
+    {
+        cout << deck[i].rank << deck[i].suit << deck[i].color << ' ';
+        if (i == 12 || i == 25 || i == 38 || i == 51)
+        {
+            cout << endl;
+        }
+    }
+}
+bool LoadCard(Card *cards, string filename)
 {
     int i = 0;
+    //cards = new Card[4];
     ifstream getItems(filename);
-    string rank, suit, color;
     string line;
     if (!getItems.is_open())
     {
@@ -211,35 +178,31 @@ bool Game::LoadCard(Card *cards, int n, string filename)
     }
     else
     {
-        while (!getItems.eof())
+        while (!getItems.eof() && i<4)
         {
             std::getline(getItems, line);
-            if (line[0] == ' ' || line == "")
-            {
-                continue;
-            }
-            stringstream ss(line);
-            std::getline(ss, color, ',');
-            deck[i].color = color[0];
 
-            std::getline(ss, suit, ',');
-            deck[i].suit = suit[0];
-
-            std::getline(ss, rank, ',');
-            deck[i].rank = rank[0];
+            cards[i].color = line[0];
+            cards[i].suit = line[1];
+            cards[i].rank = line[2];
             i++;
         }
         getItems.close();
+        //cout << "returning\n";
         return true;
     }
 }
-bool Game::LoadGameState()
+bool LoadGameState(Card **gameState, string filename)
 {
-    cout << "load game state\n";
-    int i = 0;
-    int j = 0;
-    ifstream getItems("gameState.txt");
-    string card;
+     for (int i = 0; i < 8; i++)
+    {
+        delete[] gameState[i];
+    }
+    int sizearr[8];
+    // cout << "into gs\n";
+    int i = 0, j = 0;
+    ifstream getItems(filename);
+    // string card;
     string line;
     if (!getItems.is_open())
     {
@@ -250,30 +213,65 @@ bool Game::LoadGameState()
     {
         while (!getItems.eof())
         {
-            std::getline(getItems, line);
-            if (line == "" || line[0] == ' ')
-            {
-                continue;
-            }
-            // need to change condition. writes garbage value, segmentation faults
             j = 0;
-            while (gameState[i][j].rank != '\0')
+            while (1)
             {
-                stringstream ss(line);
-                std::getline(ss, card, ';');
-                gameState[i][j].color = card[0];
-                gameState[i][j].suit = card[1];
-                gameState[i][j].rank = card[2];
+                std::getline(getItems, line);
+                if (line == ";")
+                {
+                    break;
+                }
                 j++;
             }
+            sizearr[i] = j;
             i++;
+            if (i == 8)
+            {
+                break;
+            }
         }
         getItems.close();
+
+        ifstream myfile(filename);
+
+        for (int i = 0; i < 8; i++)
+        {
+            gameState[i] = new Card[sizearr[i] + 1];
+        }
+        i = 0;
+        while (!myfile.eof())
+        {
+            for (int j = 0; j < sizearr[i]; j++)
+            {
+                std::getline(myfile, line);
+                if (line == ";\n")
+                {
+                    break;
+                }
+
+                gameState[i][j].color = line[0];
+                gameState[i][j].suit = line[1];
+                gameState[i][j].rank = line[2];
+            }
+            i++;
+            if (i >= 8)
+            {
+                break;
+            }
+        }
+        for (int i = 0; i < 8; i++)
+        {
+            gameState[i][sizearr[i]].color = ' ';
+            gameState[i][sizearr[i]].suit = ' ';
+            gameState[i][sizearr[i]].rank = ' ';
+        }
+        myfile.close();
+
         return true;
     }
 }
 
-bool Game::SaveDeck(Card *cards, int n, string filename)
+bool SaveCard(Card *deck, string filename)
 {
     // This variable for read data from file
     ofstream myfile;
@@ -283,11 +281,10 @@ bool Game::SaveDeck(Card *cards, int n, string filename)
     {
         // These lines will write all array data to the file and make a comma separated file
 
-        for (int i = 0; i < numberOfCards; i++)
+        for (int i = 0; i < 4; i++)
         {
             myfile << deck[i].color << deck[i].suit << deck[i].rank << endl;
         }
-        myfile << endl;
         myfile.close();
         return true;
     }
@@ -297,28 +294,27 @@ bool Game::SaveDeck(Card *cards, int n, string filename)
         return false;
     }
 }
-bool Game::SaveGameState()
+bool SaveGameState(Card **gameState, string filename)
 {
     int j = 0;
     // This variable for read data from file
     ofstream myfile;
-    myfile.open("gameState.txt");
+    myfile.open(filename);
     // This function will check if the file open then write data from file
     if (myfile.is_open())
     {
         // These lines will write all array data to the file and make a comma separated file
-
         for (int i = 0; i < 8; i++)
         {
-            // need to change condition. writes garbage value, segmentation faults
             j = 0;
-            while (gameState[i][j].rank != ' ')
+            while (gameState[i][j].color != ' ' || gameState[i][j].rank != ' ' || gameState[i][j].suit != ' ')
             {
-                myfile << gameState[i][j].color << gameState[i][j].suit << gameState[i][j].rank << ";";
+                myfile << gameState[i][j].color << gameState[i][j].suit << gameState[i][j].rank << "\n";
                 j++;
             }
-            myfile << endl;
+            myfile << ";\n";
         }
+        myfile.close();
         return true;
     }
     else
@@ -328,7 +324,7 @@ bool Game::SaveGameState()
     }
 }
 
-int Game::MovesByUser()
+int MovesByUser()
 {
     bool valid = true;
     int choice = 0;
@@ -339,10 +335,11 @@ int Game::MovesByUser()
              << "Press 3 for free cell to column move" << endl
              << "Press 4 to move from column to home cell" << endl
              << "Press 5 to move from free cell to home cell" << endl
-             << "Press 6 to save your unfinished game" << endl;
+             << "Press 6 to save your unfinished game" << endl
+             << "Choice: ";
         cin >> choice;
 
-        if (choice >= 1 && choice <= 6)
+        if (choice == 1 || choice == 2 || choice == 3 || choice == 4 || choice == 5 || choice == 6)
         {
             return choice;
             valid = false;
@@ -356,7 +353,7 @@ int Game::MovesByUser()
     return choice;
 }
 
-int Game::GameOptions()
+int GameOptions()
 {
     /*This function takes in the user's wish to play a new game or a previously saved game.
 
@@ -370,6 +367,7 @@ int Game::GameOptions()
 
         cout << "Press 1 to start new game" << endl;
         cout << "Press 2 to resume saved game" << endl;
+        cout << "Choice: ";
         cin >> choice;
         if (choice == 1 || choice == 2)
         {
@@ -385,7 +383,7 @@ int Game::GameOptions()
     return choice;
 }
 
-void Game::initializeBoard()
+void initializeBoard(Card *deck, int numberOfCards, Card **gameState, Card *freeCells, Card *HomeSlots)
 {
     // This function initializes the board for the first time when you start a new game.
 
@@ -426,13 +424,13 @@ void Game::initializeBoard()
     }
     for (int j = 0; j < 4; j++)
     {
-        homeSlots[j].color = ' ';
-        homeSlots[j].suit = ' ';
-        homeSlots[j].rank = ' ';
+        HomeSlots[j].color = ' ';
+        HomeSlots[j].suit = ' ';
+        HomeSlots[j].rank = ' ';
     }
 }
 
-void Game::displayBoard()
+void displayBoard(Card **gameState, Card *freeCells, Card *HomeSlots)
 {
     // This function displays the board for the user to see.
 
@@ -444,7 +442,7 @@ void Game::displayBoard()
     cout << "\tHome Slots:  | ";
     for (int i = 0; i < 4; i++)
     {
-        cout << homeSlots[i].rank << homeSlots[i].suit << " |";
+        cout << HomeSlots[i].rank << HomeSlots[i].suit << " |";
     }
     cout << endl;
     cout << "Columns: " << endl;
@@ -462,111 +460,230 @@ void Game::displayBoard()
 }
 
 // still need to work on column to column move
-void Game::columnToColumn()
+void columnToColumn(Card **gameState, Card *freeCells)
 {
-    // masla
-    //  This function implements in the user's move from column to column
-
-    /*
-    i want to do something like this:
-    cout << "Enter the column number from which you want to move the card: ";
-    int columnFrom;
-    cin >> columnFrom;
-    columnfrom--;
-    int i = 0;
-    while(gameState[columnFrom][i].rank != ' ')
+    int count = 0;
+    for (int i = 0; i < 4; i++)
     {
-        i++;
+        if (freeCells[i].rank == ' ')
+        {
+            count++;
+        }
     }
-    i--;
-    cout << "Enter the number of cards you want to move: "
-    int << numberOfCards;
-    cin >> numberOfCards;
-    cout << "Enter the column number to which you want to move the card: ";
-    int columnTo;
-    cin >> columnTo;
-    columnTo--;
-    int j = 0;
-    while(gameState[columnTo][j].rank != ' ')
-    {
-        j++;
-    }
-    now i want to check if the move is valid or not.
-    so you run a loop from columnFrom to columnFrom - numberOfCards and check if the card is red and the next card is black or vice versa.
-    You also check if the cards are successive - i.e the next card is one less than the previous card, or if the next card is a king and the previous card is an ace,
-    or if the next card is a queen and the previous card is a king, or if the next card is a jack and the previous card is a queen, or if the next card is a ten and the previous card is a 9.
-    etc.
-    then if the card is valid, you check if card[columnFrom][i - numberOfCards] is greater than card[columnTo][i].rank. (need to check all the corner cases such as queen king etc)
-    if it is, then you move the card.
-    else you print an error message.
-    */
+    count++;
+    // cout << "Valid number of cards you can move from column to column is: " << count <<endl;
 
-    int col1, col2;
+    int col1, col2, no_cards;
     cout << "Enter the column number from which you want to move the card: ";
     cin >> col1;
+    cout << "Enter the number of Cards you wish to move: ";
+    cin >> no_cards;
     cout << "Enter the column number to which you want to move the card: ";
     cin >> col2;
     col1--;
     col2--;
-    int i = 0;
-    while (gameState[col1][i].rank != ' ')
+
+    if (no_cards < 1 || no_cards > count)
     {
-        i++;
+        cout << "Invalid Move. Please try again.\n"
+             << endl;
     }
-    i--;
-    int j = 0;
-    while (gameState[col2][j].rank != ' ')
+    else
     {
-        j++;
-    }
-    if (gameState[col2][j - 1].rank == ' ')
-    {
-        gameState[col2][j - 1] = gameState[col1][i];
-        gameState[col1][i].rank = ' ';
-        gameState[col1][i].suit = ' ';
-        gameState[col1][i].color = ' ';
-    }
-    else if (gameState[col2][j - 1].rank != ' ')
-    {
-        if (gameState[col2][j - 1].color != gameState[col1][i].color)
+        int i = 0;
+        int j = 0;
+        while (gameState[col1][i].rank != ' ')
         {
-            if (gameState[col2][j - 1].rank == gameState[col1][i].rank + 1)
+            i++;
+        }
+        while (gameState[col2][j].rank != ' ')
+        {
+            j++;
+        }
+        i--;
+        j--;
+
+        bool valid = false;
+        bool check = false;
+        if (no_cards == 1)
+        {
+            if (gameState[col1][i].color != gameState[col2][j].color)
             {
-                gameState[col2][j] = gameState[col1][i];
+                if (gameState[col1][i].rank + char(1) == gameState[col2][j].rank)
+                {
+                    valid = true;
+                }
+                else if (gameState[col1][i].rank == 'Q' && gameState[col2][j].rank == 'K')
+                {
+                    valid = true;
+                }
+                else if (gameState[col1][i].rank == 'J' && gameState[col2][j].rank == 'Q')
+                {
+                    valid = true;
+                }
+                else if (gameState[col1][i].rank == 'T' && gameState[col2][j].rank == 'J')
+                {
+                    valid = true;
+                }
+                else if (gameState[col1][i].rank == '9' && gameState[col2][j].rank == 'T')
+                {
+                    valid = true;
+                }
+                else
+                {
+                    valid = false;
+                    cout << "\nInvalid move. Please try again." << endl;
+                }
+            }
+            if (valid)
+            {
+                gameState[col2][j + 1].rank = gameState[col1][i].rank;
+                gameState[col2][j + 1].suit = gameState[col1][i].suit;
+                gameState[col2][j + 1].color = gameState[col1][i].color;
+
+                // first lets reduce the size of col1.
+
+                Card *temp1 = new Card[i + 1];
+                // cout << "The size before transfer is: " << i+1 << endl;
+                for (int k = 0; k < i; k++)
+                {
+                    temp1[k] = gameState[col1][k];
+                }
+                delete[] gameState[col1];
+                gameState[col1] = temp1;
+
                 gameState[col1][i].rank = ' ';
                 gameState[col1][i].suit = ' ';
                 gameState[col1][i].color = ' ';
+
+                // now lets increase the size of col2
+
+                Card *temp2 = new Card[j + 3];
+                for (int k = 0; k < j + 2; k++)
+                {
+                    temp2[k] = gameState[col2][k];
+                }
+                delete[] gameState[col2];
+                temp2[j + 2].rank = ' ';
+                temp2[j + 2].color = ' ';
+                temp2[j + 2].suit = ' ';
+                gameState[col2] = temp2;
             }
-            else if (gameState[col2][j - 1].rank == 'K' && gameState[col1][i].rank == 'Q')
+        }
+        else if (no_cards == 2)
+        {
+            if (gameState[col1][i].color != gameState[col1][i - 1].color)
             {
-                gameState[col2][j] = gameState[col1][i];
-                gameState[col1][i].rank = ' ';
-                gameState[col1][i].suit = ' ';
-                gameState[col1][i].color = ' ';
+                if (gameState[col1][i].rank + char(1) == gameState[col1][i - 1].rank)
+                {
+                    check = true;
+                }
+                else if (gameState[col1][i].rank == 'Q' && gameState[col1][i - 1].rank == 'K')
+                {
+                    check = true;
+                }
+                else if (gameState[col1][i].rank == 'J' && gameState[col1][i - 1].rank == 'Q')
+                {
+                    check = true;
+                }
+                else if (gameState[col1][i].rank == 'T' && gameState[col1][i - 1].rank == 'J')
+                {
+                    check = true;
+                }
+                else if (gameState[col1][i].rank == '9' && gameState[col1][i - 1].rank == 'T')
+                {
+                    check = true;
+                }
+                else
+                {
+                    check = false;
+                    cout << "The two cards are not successive/alternating colors. Invalid move. Try again.\n"
+                         << endl;
+                }
+                // see if the two cards are successive and alternating, then check if the upper of the
+                // two cards go with the last card of col2
+                if (check)
+                {
+                    if (gameState[col1][i - 1].color != gameState[col2][j].color)
+                    {
+                        if (gameState[col1][i - 1].rank + char(1) == gameState[col2][j].rank)
+                        {
+                            valid = true;
+                        }
+                        else if (gameState[col1][i - 1].rank == 'Q' && gameState[col2][j].rank == 'K')
+                        {
+                            valid = true;
+                        }
+                        else if (gameState[col1][i - 1].rank == 'J' && gameState[col2][j].rank == 'Q')
+                        {
+                            valid = true;
+                        }
+                        else if (gameState[col1][i - 1].rank == 'T' && gameState[col2][j].rank == 'J')
+                        {
+                            valid = true;
+                        }
+                        else if (gameState[col1][i - 1].rank == '9' && gameState[col2][j].rank == 'T')
+                        {
+                            valid = true;
+                        }
+                        else
+                        {
+                            valid = false;
+                            cout << "\nInvalid move. Please try again." << endl;
+                        }
+                    }
+                    else
+                    {
+                        cout << "Invalid Move! Try again.\n"
+                             << endl;
+                    }
+                    if (valid)
+                    {
+                        // increase size of the receiving array and copying the last two elements in it(col2)
+                        Card *tempp = new Card[j + 4];
+                        for (int k = 0; k < j + 1; k++)
+                        {
+                            tempp[k] = gameState[col2][k];
+                        }
+                        delete[] gameState[col2];
+                        tempp[j + 1].color = gameState[col1][i - 1].color;
+                        tempp[j + 1].suit = gameState[col1][i - 1].suit;
+                        tempp[j + 1].rank = gameState[col1][i - 1].rank;
+
+                        tempp[j + 2].color = gameState[col1][i].color;
+                        tempp[j + 2].suit = gameState[col1][i].suit;
+                        tempp[j + 2].rank = gameState[col1][i].rank;
+
+                        tempp[j + 3].rank = ' ';
+                        tempp[j + 3].suit = ' ';
+                        tempp[j + 3].color = ' ';
+
+                        gameState[col2] = tempp;
+
+                        // decrease the size of the sending array and deleting elements.
+                        Card *temppp = new Card[i];
+                        for (int k = 0; k < i - 1; k++)
+                        {
+                            temppp[k] = gameState[col1][k];
+                        }
+                        delete[] gameState[col1];
+                        temppp[i - 1].rank = ' ';
+                        temppp[i - 1].suit = ' ';
+                        temppp[i - 1].color = ' ';
+
+                        gameState[col1] = temppp;
+                    }
+                }
             }
-            else if (gameState[col2][j - 1].rank == 'Q' && gameState[col1][i].rank == 'J')
-            {
-                gameState[col2][j] = gameState[col1][i];
-                gameState[col1][i].rank = ' ';
-                gameState[col1][i].suit = ' ';
-                gameState[col1][i].color = ' ';
-            }
-            else if (gameState[col2][j - 1].rank == 'J' && gameState[col1][i].rank == 'T')
-            {
-                gameState[col2][j] = gameState[col1][i];
-                gameState[col1][i].rank = ' ';
-                gameState[col1][i].suit = ' ';
-                gameState[col1][i].color = ' ';
-            }
-            else
-            {
-                cout << "Invalid move. Please try again." << endl;
-            }
+        }
+        else if (no_cards == 3)
+        {
         }
     }
 }
 
-void Game::columnToFreeCell()
+// the following are all good
+void columnToFreeCell(Card **gameState, Card *freeCells)
 {
     // This function implements in the user's move from column to freecell
     int col;
@@ -586,7 +703,9 @@ void Game::columnToFreeCell()
     }
     if (j < 5 && freeCells[j].rank == ' ')
     {
-        freeCells[j] = gameState[col][i];
+        freeCells[j].rank = gameState[col][i].rank;
+        freeCells[j].color = gameState[col][i].color;
+        freeCells[j].suit = gameState[col][i].suit;
 
         Card *temp = new Card[i + 1];
         // cout << "The size before transfer is: " << i+1 << endl;
@@ -615,8 +734,7 @@ void Game::columnToFreeCell()
         cout << "\nInvalid move. Your freecells are full!" << endl;
     }
 }
-
-void Game::freeCellToColumn()
+void freeCellToColumn(Card **gameState, Card *freeCells)
 {
     // This function implements the users move from any freecell to column
     int col;
@@ -627,6 +745,7 @@ void Game::freeCellToColumn()
     cin >> freeCell;
     col--;
     freeCell--;
+    bool valid = false;
     if (freeCell > 4)
     {
         cout << "\nInvalid move. There are only 4 freecells :(" << endl;
@@ -649,48 +768,27 @@ void Game::freeCellToColumn()
             {
                 if (freeCells[freeCell].rank + char(1) == gameState[col][i].rank)
                 {
-                    gameState[col][i + 1].rank = freeCells[freeCell].rank;
-                    gameState[col][i + 1].suit = freeCells[freeCell].suit;
-                    gameState[col][i + 1].color = freeCells[freeCell].color;
-
-                    freeCells[freeCell].rank = ' ';
-                    freeCells[freeCell].suit = ' ';
-                    freeCells[freeCell].color = ' ';
-
-                    gameState[col][i + 2].rank = ' ';
-                    gameState[col][i + 2].suit = ' ';
-                    gameState[col][i + 2].color = ' ';
+                    valid = true;
                 }
                 else if (freeCells[freeCell].rank == 'Q' && gameState[col][i].rank == 'K')
                 {
-                    gameState[col][i + 1].rank = freeCells[freeCell].rank;
-                    gameState[col][i + 1].suit = freeCells[freeCell].suit;
-                    gameState[col][i + 1].color = freeCells[freeCell].color;
-
-                    freeCells[freeCell].rank = ' ';
-                    freeCells[freeCell].suit = ' ';
-                    freeCells[freeCell].color = ' ';
-
-                    gameState[col][i + 2].rank = ' ';
-                    gameState[col][i + 2].suit = ' ';
-                    gameState[col][i + 2].color = ' ';
+                    valid = true;
                 }
                 else if (freeCells[freeCell].rank == 'J' && gameState[col][i].rank == 'Q')
                 {
-                    gameState[col][i + 1].rank = freeCells[freeCell].rank;
-                    gameState[col][i + 1].suit = freeCells[freeCell].suit;
-                    gameState[col][i + 1].color = freeCells[freeCell].color;
-
-                    freeCells[freeCell].rank = ' ';
-                    freeCells[freeCell].suit = ' ';
-                    freeCells[freeCell].color = ' ';
-
-                    gameState[col][i + 2].rank = ' ';
-                    gameState[col][i + 2].suit = ' ';
-                    gameState[col][i + 2].color = ' ';
+                    valid = true;
                 }
                 else if (freeCells[freeCell].rank == 'T' && gameState[col][i].rank == 'J')
                 {
+                    valid = true;
+                }
+                else
+                {
+                    valid = false;
+                    cout << "\nInvalid move. Please try again." << endl;
+                }
+                if (valid)
+                {
                     gameState[col][i + 1].rank = freeCells[freeCell].rank;
                     gameState[col][i + 1].suit = freeCells[freeCell].suit;
                     gameState[col][i + 1].color = freeCells[freeCell].color;
@@ -699,13 +797,22 @@ void Game::freeCellToColumn()
                     freeCells[freeCell].suit = ' ';
                     freeCells[freeCell].color = ' ';
 
-                    gameState[col][i + 2].rank = ' ';
-                    gameState[col][i + 2].suit = ' ';
-                    gameState[col][i + 2].color = ' ';
-                }
-                else
-                {
-                    cout << "\nInvalid move. Please try again." << endl;
+                    Card *temparr = new Card[i + 3];
+                    for (int k = 0; k < i + 2; k++)
+                    {
+                        temparr[k] = gameState[col][k];
+                    }
+                    delete[] gameState[col];
+                    temparr[i + 2].rank = ' ';
+                    temparr[i + 2].color = ' ';
+                    temparr[i + 2].suit = ' ';
+                    gameState[col] = temparr;
+
+                    // int w = 0;
+                    // while (gameState[col][w].rank != ' ')
+                    // {
+                    //     w++;
+                    // }
                 }
             }
             else
@@ -716,13 +823,13 @@ void Game::freeCellToColumn()
         }
     }
 }
-
-void Game::columnToHomeSlot() // need to implement dynamic arrays
+void columnToHomeSlot(Card **gameState, Card *HomeSlots)
 {
     cout << "Enter the column number from which you want to move the card: ";
     int col;
     cin >> col;
     col--;
+    bool valid = false;
 
     int i = 0;
     while (gameState[col][i].rank != ' ')
@@ -736,17 +843,11 @@ void Game::columnToHomeSlot() // need to implement dynamic arrays
     cin >> homeSlot;
     homeSlot--;
 
-    if (homeSlots[homeSlot].rank == ' ')
+    if (HomeSlots[homeSlot].rank == ' ')
     {
         if (gameState[col][i].rank == 'A')
         {
-            homeSlots[homeSlot].rank = gameState[col][i].rank;
-            homeSlots[homeSlot].suit = gameState[col][i].suit;
-            homeSlots[homeSlot].color = gameState[col][i].color;
-
-            gameState[col][i].rank = ' ';
-            gameState[col][i].suit = ' ';
-            gameState[col][i].color = ' ';
+            valid = true;
         }
         else
         {
@@ -758,77 +859,70 @@ void Game::columnToHomeSlot() // need to implement dynamic arrays
         cout << "\nInvalid move. Please try again." << endl;
     }
 
-    if (gameState[col][i].suit == homeSlots[homeSlot].suit)
+    if (gameState[col][i].suit == HomeSlots[homeSlot].suit)
     {
-        cout << "The suits are the same" << endl;
-        if (gameState[col][i].rank == '2' && homeSlots[homeSlot].rank == 'A')
+        // cout << "The suits are the same" << endl;
+        if (gameState[col][i].rank == '2' && HomeSlots[homeSlot].rank == 'A')
         {
-            cout << "The ranks are succesive" << endl;
-            homeSlots[homeSlot].rank = gameState[col][i].rank;
-            homeSlots[homeSlot].suit = gameState[col][i].suit;
-            homeSlots[homeSlot].color = gameState[col][i].color;
-
-            gameState[col][i].rank = ' ';
-            gameState[col][i].suit = ' ';
-            gameState[col][i].color = ' ';
+            // cout << "The ranks are succesive" << endl;
+            valid = true;
         }
-        else if (gameState[col][i].rank == homeSlots[homeSlot].rank + char(1))
+        else if (gameState[col][i].rank == HomeSlots[homeSlot].rank + char(1))
         {
-            homeSlots[homeSlot].rank = gameState[col][i].rank;
-            homeSlots[homeSlot].suit = gameState[col][i].suit;
-            homeSlots[homeSlot].color = gameState[col][i].color;
+            valid = true;
+        }
 
-            gameState[col][i].rank = ' ';
-            gameState[col][i].suit = ' ';
-            gameState[col][i].color = ' ';
+        else if (gameState[col][i].rank == 'K' && HomeSlots[homeSlot].rank == 'Q')
+        {
+            valid = true;
+        }
+        else if (gameState[col][i].rank == 'Q' && HomeSlots[homeSlot].rank == 'J')
+        {
+            valid = true;
+        }
+        else if (gameState[col][i].rank == 'J' && HomeSlots[homeSlot].rank == 'T')
+        {
+            valid = true;
+        }
+        else if (gameState[col][i].rank == 'T' && HomeSlots[homeSlot].rank == '9')
+        {
+            valid = true;
+        }
+        else
+        {
+            valid = false;
+            cout << "\nInvalid move. Please try again." << endl;
         }
     }
-    else if (gameState[col][i].rank == 'K' && homeSlots[homeSlot].rank == 'Q')
+    if (valid)
     {
-        homeSlots[homeSlot].rank = gameState[col][i].rank;
-        homeSlots[homeSlot].suit = gameState[col][i].suit;
-        homeSlots[homeSlot].color = gameState[col][i].color;
+        HomeSlots[homeSlot].rank = gameState[col][i].rank;
+        HomeSlots[homeSlot].suit = gameState[col][i].suit;
+        HomeSlots[homeSlot].color = gameState[col][i].color;
+
+        Card *tempfree = new Card[i + 1];
+        cout << "The size before the transfer is: " << i + 1 << endl;
+        for (int k = 0; k < i; k++)
+        {
+            tempfree[k] = gameState[col][k];
+        }
+        delete[] gameState[col];
+        gameState[col] = tempfree;
 
         gameState[col][i].rank = ' ';
         gameState[col][i].suit = ' ';
         gameState[col][i].color = ' ';
-    }
-    else if (gameState[col][i].rank == 'Q' && homeSlots[homeSlot].rank == 'J')
-    {
-        homeSlots[homeSlot].rank = gameState[col][i].rank;
-        homeSlots[homeSlot].suit = gameState[col][i].suit;
-        homeSlots[homeSlot].color = gameState[col][i].color;
 
-        gameState[col][i].rank = ' ';
-        gameState[col][i].suit = ' ';
-        gameState[col][i].color = ' ';
-    }
-    else if (gameState[col][i].rank == 'J' && homeSlots[homeSlot].rank == 'T')
-    {
-        homeSlots[homeSlot].rank = gameState[col][i].rank;
-        homeSlots[homeSlot].suit = gameState[col][i].suit;
-        homeSlots[homeSlot].color = gameState[col][i].color;
-
-        gameState[col][i].rank = ' ';
-        gameState[col][i].suit = ' ';
-        gameState[col][i].color = ' ';
-    }
-    else if (gameState[col][i].rank == 'T' && homeSlots[homeSlot].rank == '9')
-    {
-        homeSlots[homeSlot].rank = gameState[col][i].rank;
-        homeSlots[homeSlot].suit = gameState[col][i].suit;
-        homeSlots[homeSlot].color = gameState[col][i].color;
-
-        gameState[col][i].rank = ' ';
-        gameState[col][i].suit = ' ';
-        gameState[col][i].color = ' ';
-    }
-    else
-    {
-        cout << "\nInvalid move. Please try again." << endl;
+        // int x = 0;
+        // while (gameState[col][x].rank != ' ')
+        // {
+        //     cout << "Running loop\n";
+        //     x++;
+        // }
+        // cout << "The size after transfer is: " << x << endl;
     }
 }
-void freeCellToHomeSlot(Card *freeCells, Card *homeSlots) // need to implement dynamic arrays
+void freeCellToHomeSlot(Card *freeCells, Card *HomeSlots)
 {
     cout << "Enter the free cell number from which you want to move the card: ";
     int freeCell;
@@ -839,89 +933,59 @@ void freeCellToHomeSlot(Card *freeCells, Card *homeSlots) // need to implement d
     int homeSlot;
     cin >> homeSlot;
     homeSlot--;
+    bool valid = false;
 
-    if (homeSlots[homeSlot].rank == ' ')
+    if (HomeSlots[homeSlot].rank == ' ')
     {
         if (freeCells[freeCell].rank == 'A')
         {
-            homeSlots[homeSlot].rank = freeCells[freeCell].rank;
-            homeSlots[homeSlot].suit = freeCells[freeCell].suit;
-            homeSlots[homeSlot].color = freeCells[freeCell].color;
-
-            freeCells[freeCell].rank = ' ';
-            freeCells[freeCell].suit = ' ';
-            freeCells[freeCell].color = ' ';
+            valid = true;
         }
         else
         {
             cout << "\nInvalid move. Please try again." << endl;
         }
     }
-    else if (freeCells[freeCell].suit == homeSlots[homeSlot].suit)
+    else if (freeCells[freeCell].suit == HomeSlots[homeSlot].suit)
     {
-        if (freeCells[freeCell].rank == '2' && homeSlots[homeSlot].rank == 'A')
+        if (freeCells[freeCell].rank == '2' && HomeSlots[homeSlot].rank == 'A')
         {
-            homeSlots[homeSlot].rank = freeCells[freeCell].rank;
-            homeSlots[homeSlot].suit = freeCells[freeCell].suit;
-            homeSlots[homeSlot].color = freeCells[freeCell].color;
-
-            freeCells[freeCell].rank = ' ';
-            freeCells[freeCell].suit = ' ';
-            freeCells[freeCell].color = ' ';
+            valid = true;
         }
-        else if (freeCells[freeCell].rank == homeSlots[homeSlot].rank + char(1))
+        else if (freeCells[freeCell].rank == HomeSlots[homeSlot].rank + char(1))
         {
-            homeSlots[homeSlot].rank = freeCells[freeCell].rank;
-            homeSlots[homeSlot].suit = freeCells[freeCell].suit;
-            homeSlots[homeSlot].color = freeCells[freeCell].color;
-
-            freeCells[freeCell].rank = ' ';
-            freeCells[freeCell].suit = ' ';
-            freeCells[freeCell].color = ' ';
+            valid = true;
         }
     }
-    else if (freeCells[freeCell].rank == 'K' && homeSlots[homeSlot].rank == 'Q')
+    else if (freeCells[freeCell].rank == 'K' && HomeSlots[homeSlot].rank == 'Q')
     {
-        homeSlots[homeSlot].rank = freeCells[freeCell].rank;
-        homeSlots[homeSlot].suit = freeCells[freeCell].suit;
-        homeSlots[homeSlot].color = freeCells[freeCell].color;
-
-        freeCells[freeCell].rank = ' ';
-        freeCells[freeCell].suit = ' ';
-        freeCells[freeCell].color = ' ';
+        valid = true;
     }
-    else if (freeCells[freeCell].rank == 'Q' && homeSlots[homeSlot].rank == 'J')
+    else if (freeCells[freeCell].rank == 'Q' && HomeSlots[homeSlot].rank == 'J')
     {
-        homeSlots[homeSlot].rank = freeCells[freeCell].rank;
-        homeSlots[homeSlot].suit = freeCells[freeCell].suit;
-        homeSlots[homeSlot].color = freeCells[freeCell].color;
-
-        freeCells[freeCell].rank = ' ';
-        freeCells[freeCell].suit = ' ';
-        freeCells[freeCell].color = ' ';
+        valid = true;
     }
-    else if (freeCells[freeCell].rank == 'J' && homeSlots[homeSlot].rank == 'T')
+    else if (freeCells[freeCell].rank == 'J' && HomeSlots[homeSlot].rank == 'T')
     {
-        homeSlots[homeSlot].rank = freeCells[freeCell].rank;
-        homeSlots[homeSlot].suit = freeCells[freeCell].suit;
-        homeSlots[homeSlot].color = freeCells[freeCell].color;
-
-        freeCells[freeCell].rank = ' ';
-        freeCells[freeCell].suit = ' ';
-        freeCells[freeCell].color = ' ';
+        valid = true;
     }
-    else if (freeCells[freeCell].rank == 'T' && homeSlots[homeSlot].rank == '9')
+    else if (freeCells[freeCell].rank == 'T' && HomeSlots[homeSlot].rank == '9')
     {
-        homeSlots[homeSlot].rank = freeCells[freeCell].rank;
-        homeSlots[homeSlot].suit = freeCells[freeCell].suit;
-        homeSlots[homeSlot].color = freeCells[freeCell].color;
-
-        freeCells[freeCell].rank = ' ';
-        freeCells[freeCell].suit = ' ';
-        freeCells[freeCell].color = ' ';
+        valid = true;
     }
     else
     {
+        valid = false;
         cout << "\nInvalid move. Please try again." << endl;
+    }
+    if (valid)
+    {
+        HomeSlots[homeSlot].rank = freeCells[freeCell].rank;
+        HomeSlots[homeSlot].suit = freeCells[freeCell].suit;
+        HomeSlots[homeSlot].color = freeCells[freeCell].color;
+
+        freeCells[freeCell].rank = ' ';
+        freeCells[freeCell].suit = ' ';
+        freeCells[freeCell].color = ' ';
     }
 }
